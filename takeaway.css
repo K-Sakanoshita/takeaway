@@ -1,0 +1,138 @@
+html {
+    height: 100%;
+    font-size: 12px;
+    padding: 0px;
+    margin: 0px;
+}
+
+body {
+    height: 100%;
+    padding: 0px;
+    margin: 0px;
+    overflow: hidden;
+}
+
+header {
+    width: 100%;
+    height: 38px;
+    margin: 0px !important;
+    padding: 0px !important;
+    color: #ffffff !important;
+    background-color: #0f940f;
+}
+
+.menu {
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.dropdown-toggle::after {
+    color: white !important;
+}
+
+#container {
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+#article {
+    float: none;
+    clear: both;
+    width: 100%;
+    overflow: auto;
+    position: relative;
+    background-color: white;
+    margin: 0px 0px 0px 0px;
+    overflow: hidden;
+}
+
+
+/* Map Area */
+
+#mapid {
+    margin: 0px;
+    width: 100%;
+}
+
+
+/* Data area */
+
+#filterid {
+    margin: 0px;
+    padding: 1px;
+    height: 40px;
+    width: 100%;
+}
+
+
+/* Data area */
+
+#dataid {
+    margin: 0px;
+    padding: 1px;
+    width: 100%;
+}
+
+
+/* table area(include Data area) */
+
+#tableid {
+    width: 100%;
+    font-size: 90%;
+}
+
+#morezoom h1 {
+    color: rgba(0, 0, 0, 1);
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 10px;
+}
+
+
+/* default parts set */
+
+h1 {
+    float: left;
+    font-family: Helvetica, Arial, Roboto, “Droid Sans”, “游ゴシック”, YuGothic, “ヒラギノ角ゴ ProN W3″, “Hiragino Kaku Gothic ProN”, “メイリオ”, Meiryo, sans-serif;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    margin: 0px !important;
+    padding: 2px 6px;
+    width: 100%;
+    white-space: nowrap;
+}
+
+h2 {
+    font-weight: 400 !important;
+    font-size: 14px !important;
+    margin: 0px !important;
+    padding: 2px 6px;
+    white-space: nowrap;
+}
+
+div.icon {
+    width: 100% !important;
+    white-space: nowrap;
+}
+
+img.icon {
+    width: 16px;
+    height: 16px;
+}
+
+span.icon {
+    margin-left: 4px;
+    font-size: 14px;
+    white-space: nowrap;
+    background-color: white;
+    line-height: 1.0;
+    opacity: 0.7;
+}
+
+.modal-backdrop {
+    background-color: initial !important;
+    opacity: 1 !important;
+}

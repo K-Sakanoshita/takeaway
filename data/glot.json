@@ -1,0 +1,42 @@
+{
+    "title": {
+        "ja": "みんなでテイクアウトMAP <高槻版>",
+        "en": "Takeout MAP with everyone <Takatsuki Ver>"
+    },
+    "owner": {
+        "ja": "CoderDojo高槻について",
+        "en": "about CoderDojo Takatsuki"
+    },
+    "data_edit": {
+        "ja": "店舗編集",
+        "en": "EDIT"
+    },
+    "id_edit_manual": {
+        "ja": "(PC用)店舗登録/修正マニュアル",
+        "en": "(for PC)Store edit manual"
+    },
+    "mapcontrib_edit_manual": {
+        "ja": "(スマホ用)簡易編集ツールマニュアル",
+        "en": "(for smartphone)simple editing tool manual"
+    },
+    "mapcontrib_edit": {
+        "ja": "(スマホ用)簡易編集ツール",
+        "en": "(for smartphone)simple editing tool"
+    },
+    "outdoor_seating_yes": {
+        "ja": "テラスあり",
+        "en": "yes"
+    },
+    "outdoor_seating_no": {
+        "ja": "テラスなし",
+        "en": "no"
+    },
+    "modal_title": {
+        "ja": "テイクアウト詳細情報",
+        "en": "Detailed information"
+    },
+    "modal_close": {
+        "ja": "閉じる",
+        "en": "OK"
+    }
+}
