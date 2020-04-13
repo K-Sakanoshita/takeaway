@@ -11,8 +11,8 @@ var DataList_Targets = [];  // リストに表示する対象物
 // consts
 const MoreZoomMsg = "ズームすると店舗が表示されます。";
 const OvGetError = "サーバーからのデータ取得に失敗しました。やり直してください。";
-const OvServer = 'https://overpass.kumi.systems/api/interpreter' // or 'https://overpass-api.de/api/interpreter' or 'https://overpass.nchc.org.tw/api/interpreter'
-//const OvServer = 'https://overpass.nchc.org.tw/api/interpreter'
+// const OvServer = 'https://overpass.kumi.systems/api/interpreter' // or 'https://overpass-api.de/api/interpreter' or 'https://overpass.nchc.org.tw/api/interpreter'
+const OvServer = 'https://overpass.nchc.org.tw/api/interpreter'
 const FILES = ['modals.html', 'data/category-ja.json', 'data/datatables-ja.json', 'data/local.json'];
 const OverPass = {
     TAK: ['node["takeaway"!="no"]["takeaway"]', 'way["takeaway"!="no"]["takeaway"]'],
