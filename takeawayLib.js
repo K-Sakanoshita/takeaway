@@ -220,7 +220,10 @@ var Marker = (function () {
                             DataList.view(DataList_Targets);
                             DisplayStatus.splash(false);
                             if (location.search !== "") {    // 引数がある場合
-                                let poi = Marker.get(location.search.replace('-', '/').slice(1));
+                                let osmid = location.search.replace(/[?&]fbclid.*/, '');
+                                osmid = osmid.replace('-', '/');
+                                osmid = osmid.replace('=', '');
+                                let poi = Marker.get(osmid.slice(1));
                                 if (poi.tag !== undefined) Takeaway.view(poi.tag);
                             }
                             LL.busy = false;
