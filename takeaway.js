@@ -5,7 +5,8 @@
 var map, gl, hash, glot;    // leaflet系(map, gl, hash) 翻訳(glot)
 var PoiData = {};           // {key: {geojson,marker}}
 var LL = {};                // latlng
-var Config = {}              // Download Config
+var Conf = {}               // Download Config
+var DataList_Targets = [];  // リストに表示する対象物
 
 // consts
 const MoreZoomMsg = "ズームすると店舗が表示されます。";
@@ -21,72 +22,60 @@ const OverPass = {
     LIB: ['node["amenity"="library"]', 'way["amenity"="library"]'],
 };
 
-const Defaults = { // 制御情報の保管場所
-    TAK: { zoom: 15, icon: "./image/bentou.svg" },
-    DEL: { zoom: 15, icon: "./image/delivery.svg" },
-    DEF: { zoom: 15, icon: "./image/bentou.svg" },
-    VND: { zoom: 17, icon: "./image/vending.svg" },
-    LIB: { zoom: 15, icon: "./image/library.svg" },
-};
-const DataList_Targets = ["TAK", "DEL", "DEF", "LIB"];     // リストに掲載する対象(自販機は無し)
-
 $(document).ready(function () {
 
     console.log("Welcome to Takeaway.");
-    for (let key in Defaults) PoiData[key] = {};        // init variable
 
-    // Load Config file
+    // Load Conf file
     let jqXHRs = [];
     for (let key in FILES) { jqXHRs.push($.get(FILES[key])) };
     $.when.apply($, jqXHRs).always(function () {
+
+        // initialize variable
         $("#Modals").html(arguments[0][0]);
         for (let idx = 1; idx <= 3; idx++) {
             let arg = arguments[idx][0];
             Object.keys(arg).forEach(key1 => {
-                Config[key1] = {};
-                Object.keys(arg[key1]).forEach((key2) => Config[key1][key2] = arg[key1][key2]);
+                Conf[key1] = {};
+                Object.keys(arg[key1]).forEach((key2) => Conf[key1][key2] = arg[key1][key2]);
             });
         };
+        DataList_Targets = Object.keys(Conf.target).filter(key => {
+            PoiData[key] = {};
+            return Conf.target[key].list;
+        });
 
-        DisplayStatus.window_resize();      // set Window Size
-        DisplayStatus.splash(true);         // Splash Top
-        DisplayStatus.make_menu();          // Splash Top
+        DisplayStatus.window_resize();      // Set Window Size
+        DisplayStatus.splash(true);         // Splash Screen
+        DisplayStatus.make_menu();          // Menu
         DataList.init();
 
         // initialize leaflet
         console.log("initialize leaflet.");
-        map = L.map('mapid', { center: Config.local.DefaultCenter, zoom: Config.local.DefaultZoom, maxZoom: 20 });
-        gl = L.mapboxGL({ container: 'map', attribution: Config.local.attribution, accessToken: 'no-token', style: Config.local.style }).addTo(map);
+        map = L.map('mapid', { center: Conf.local.DefaultCenter, zoom: Conf.local.DefaultZoom, maxZoom: 20 });
+        gl = L.mapboxGL({ container: 'map', attribution: Conf.local.attribution, accessToken: 'no-token', style: Conf.local.style }).addTo(map);
         map.zoomControl.setPosition("bottomright");
         L.control.locate({ position: 'bottomright', strings: { title: "現在地を表示" }, locateOptions: { maxZoom: 16 } }).addTo(map);
         L.control.scale({ imperial: false, maxWidth: 200 }).addTo(map);
 
-        // 翻訳
+        // translation
         glot = new Glottologist();
-        glot.import("./data/glot.json").then(() => { glot.render() }); // translation
+        glot.import("./data/glot.json").then(() => { glot.render() });
 
-        // 引数の位置情報を元にマップを移動
-        if (location.hash == "") { // 引数が無い場合
+        // 引数を元にマップの初期状態を設定
+        if (location.hash == "") {      // 緯度経度が無い場合
             hash = new L.Hash(map);
             Marker.event_move();
         } else {
             hash = new L.Hash(map);
-        }
+        };
 
         // イベント登録
-        // 画面サイズに合わせたコンテンツ表示切り替え
-        $(window).resize(DisplayStatus.window_resize);
-
-        // マップ移動時の処理
-        map.on('moveend', Marker.event_move);
-
-        // ズーム時のメッセージ表示
-        map.on('zoomend', function (e) {
-            if (map.getZoom() < Config.local.MinZoomLevel) {
-                DisplayStatus.morezoom(MoreZoomMsg);
-            } else {
-                DisplayStatus.morezoom("");
-            }
+        $(window).resize(DisplayStatus.window_resize);      // 画面サイズに合わせたコンテンツ表示切り替え
+        map.on('moveend', Marker.event_move);               // マップ移動時の処理
+        map.on('zoomend', function (e) {                    // ズーム時のメッセージ表示
+            let msg = map.getZoom() < Conf.local.MinZoomLevel ? MoreZoomMsg : "";
+            DisplayStatus.morezoom(msg);
         });
 
         // スタイル不足時のエラー回避

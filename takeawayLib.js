@@ -14,12 +14,12 @@ var Takeaway = (function () {
             _status = "get";
             var targets = [];
             if (keys == undefined || keys == "") {
-                for (let key in Defaults) targets.push(key);
+                for (let key in Conf.target) targets.push(key);
             } else {
                 targets = keys;
             };
-            if (map.getZoom() < Config.local.MinZoomLevel) {
-                console.log("Takeaway: get end(Config.local.MinZoomLevel).");
+            if (map.getZoom() < Conf.local.MinZoomLevel) {
+                console.log("Takeaway: get end(Conf.local.MinZoomLevel).");
                 Takeaway.update();
                 callback();
             } else {
@@ -40,13 +40,13 @@ var Takeaway = (function () {
         update: function (targetkey) {
             let ZoomLevel = map.getZoom();
             if (targetkey == "" || typeof (targetkey) == "undefined") { // no targetkey then update all layer
-                for (let key in Defaults) {
+                for (let key in Conf.target) {
                     Marker.all_delete(key);
-                    if (Defaults[key].zoom <= ZoomLevel) Marker.set(key);
+                    if (Conf.target[key].zoom <= ZoomLevel) Marker.set(key);
                 }
             } else {
                 Marker.all_delete(targetkey);
-                if (Defaults[targetkey].zoom <= ZoomLevel) Marker.set(targetkey);
+                if (Conf.target[targetkey].zoom <= ZoomLevel) Marker.set(targetkey);
             }
             _status = "";
         },
@@ -54,6 +54,9 @@ var Takeaway = (function () {
         view: function (tags) {
             _status = "view";
             DataList.select(tags.id);
+
+            let osmid = tags.id.replace('/', "-");
+            history.replaceState('', '', location.pathname + "?" + osmid + location.hash);
 
             $("#osmid").html(tags.id);
             $("#name").html(tags.name == null ? "-" : tags.name);
@@ -64,12 +67,12 @@ var Takeaway = (function () {
             RegexPTN.forEach(val => { openhour = openhour.replace(val[0], val[1]) });
             $("#opening_hours").html(openhour);
 
-            let delname = tags.delivery == null ? "-" : Config.category.delivery[tags.delivery];
+            let delname = tags.delivery == null ? "-" : Conf.category.delivery[tags.delivery];
             $("#delivery").html(delname);
 
             let outseet = OUTSEETS.indexOf(tags.outdoor_seating) < 0 ? "-" : tags.outdoor_seating;
             $("#outdoor_seating").html(outseet);
-            if (outseet !== "-") $("#outdoor_seating").attr("glot-model","outdoor_seating_" + outseet);
+            if (outseet !== "-") $("#outdoor_seating").attr("glot-model", "outdoor_seating_" + outseet);
 
             $("#phone").attr('href', tags.phone == null ? "" : "tel:" + tags.phone);
             $("#phone_view").html(tags.phone == null ? "-" : tags.phone);
@@ -81,10 +84,14 @@ var Takeaway = (function () {
 
             glot.render();
             $('#PoiView_Modal').modal({ backdrop: 'static', keyboard: true });
-            $('#PoiView_Modal').one('hidePrevented.bs.modal', function (e) {
+
+            let hidden = e => {
                 _status = "";
+                history.replaceState('', '', location.pathname + location.hash);
                 $('#PoiView_Modal').modal('hide');
-            });
+            };
+            $('#PoiView_Modal').one('hidePrevented.bs.modal', hidden);
+            $('#PoiView_Modal').one('hidden.bs.modal', hidden);
         },
 
         openmap: osmid => {
@@ -94,13 +101,25 @@ var Takeaway = (function () {
             window.open('https://www.google.com/maps/' + name + "@" + poi.ll.lat + ',' + poi.ll.lng + ',' + zoom + 'z');
         },
 
-        // get Category Name from Config.category(Global Variable)
+        sharemap: osmid => {
+            let _osmid = osmid.replace('/', "-");
+            let cpboard = location.origin + location.pathname + "?" + _osmid + location.hash;
+            $(document.body).append("<textarea id=\"copyTarget\" style=\"position:absolute; left:-9999px; top:0px;\">" + cpboard + "</textarea>");
+            let obj = document.getElementById("copyTarget");
+            let range = document.createRange();
+            range.selectNode(obj);
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            $("#copyTarget").remove();
+        },
+
+        // get Category Name from Conf.category(Global Variable)
         get_catname: function (tags) {
             let catname = "";
             var key1 = tags.amenity == undefined ? "shop" : "amenity";
             var key2 = tags[key1] == undefined ? "" : tags[key1];
             if (key2 !== "") { // known tags
-                catname = Config.category[key1][key2];
+                catname = Conf.category[key1][key2];
                 if (catname == undefined) catname = "";
             }
             return catname;
@@ -134,14 +153,14 @@ var Marker = (function () {
             if (geojson !== undefined) {
                 geojson.features.forEach(function (node) {
                     let tags = node.properties;
-                    let icon = L.divIcon({ className: 'icon', html: '<img class="icon" src="' + Defaults[key].icon + '">' });
+                    let icon = L.divIcon({ className: 'icon', html: '<img class="icon" src="' + Conf.target[key].icon + '">' });
                     if (node.geometry.type == "Polygon") {
                         latlngs[tags.id] = { "lat": node.geometry.coordinates[0][0][1], "lng": node.geometry.coordinates[0][0][0] };
                     } else {
                         latlngs[tags.id] = { "lat": node.geometry.coordinates[1], "lng": node.geometry.coordinates[0] };
                     }
                     alltags[tags.id] = tags;
-                    alltags[tags.id].takeaway_icon = Defaults[key].icon;   // icon情報を埋め込み(詳細情報表示で利用)
+                    alltags[tags.id].takeaway_icon = Conf.target[key].icon;   // icon情報を埋め込み(詳細情報表示で利用)
                     markers.push(L.marker(new L.LatLng(latlngs[tags.id].lat, latlngs[tags.id].lng), { icon: icon, draggable: false }));
                     markers[markers.length - 1].addTo(map).on('click', e => Takeaway.view(e.target.takeaway_tags));
                     markers[markers.length - 1].takeaway_tags = tags;
@@ -200,6 +219,10 @@ var Marker = (function () {
                         Takeaway.get("", () => {
                             DataList.view(DataList_Targets);
                             DisplayStatus.splash(false);
+                            if (location.search !== "") {    // 引数がある場合
+                                let poi = Marker.get(location.search.replace('-', '/').slice(1));
+                                if (poi.tag !== undefined) Takeaway.view(poi.tag);
+                            }
                             LL.busy = false;
                         });
                     } else {
@@ -261,7 +284,7 @@ var DataList = (function () {
                 "destroy": true,
                 "deferRender": true,
                 "dom": 't',
-                "language": Config.datatables_lang,
+                "language": Conf.datatables_lang,
                 "order": [2, 'asc'],
                 "ordering": false,
                 "orderClasses": false,
@@ -320,7 +343,7 @@ var OvPassCnt = (function () {
         get: function (targets) {
             return new Promise((resolve, reject) => {
                 let ZoomLevel = map.getZoom();
-                let LayerCounts = Object.keys(Defaults).length;
+                let LayerCounts = Object.keys(Conf.target).length;
                 if (LL.NW.lat < LLc.NW.lat && LL.NW.lng > LLc.NW.lng &&
                     LL.SE.lat > LLc.SE.lat && LL.NW.lat < LLc.NW.lat) {
                     // Within Cache range
@@ -333,7 +356,7 @@ var OvPassCnt = (function () {
                     // Not With Cache range
                     DisplayStatus.progress(0);
                     Cache = {}; // Cache Clear
-                    let magni = (ZoomLevel - Config.local.MinZoomLevel) < 1 ? 0.125 : (ZoomLevel - Config.local.MinZoomLevel) / 4;
+                    let magni = (ZoomLevel - Conf.local.MinZoomLevel) < 1 ? 0.125 : (ZoomLevel - Conf.local.MinZoomLevel) / 4;
                     let offset_lat = (LL.NW.lat - LL.SE.lat) * magni;
                     let offset_lng = (LL.SE.lng - LL.NW.lng) * magni;
                     let SE_lat = LL.SE.lat - offset_lat;
@@ -385,17 +408,17 @@ var OvPassCnt = (function () {
 var DisplayStatus = (function () {
     return {
         splash: (mode) => {
-            $("#splash_image").attr("src", Config.local.SplashImage);
+            $("#splash_image").attr("src", Conf.local.SplashImage);
             let act = mode ? { backdrop: 'static', keyboard: false } : 'hide';
             $('#Splash_Modal').modal(act);
         },
         make_menu: () => {
-            Object.keys(Config.menu).forEach(key => {
-                $("#temp_menu>a:first").attr("href", Config.menu[key].linkto);
-                $("#temp_menu>a>span:first").attr("glot-model", Config.menu[key]["glot-model"]);
+            Object.keys(Conf.menu).forEach(key => {
+                $("#temp_menu>a:first").attr("href", Conf.menu[key].linkto);
+                $("#temp_menu>a>span:first").attr("glot-model", Conf.menu[key]["glot-model"]);
                 let link = $("#temp_menu>a:first").clone();
                 $("#temp_menu").append(link);
-                if (Config.menu[key]["divider"]) $("#temp_menu>div:first").clone().appendTo($("#temp_menu"));
+                if (Conf.menu[key]["divider"]) $("#temp_menu>div:first").clone().appendTo($("#temp_menu"));
             });
             $("#temp_menu>a:first").remove();
             $("#temp_menu>div:first").remove();
