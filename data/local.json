@@ -2,8 +2,8 @@
     "local": {
         "SplashImage": "image/splash.png",
         "DefaultCenter": [
-            34.85084,
-            135.62033
+            35.681111, 
+            139.766667
         ],
         "DefaultZoom": 15,
         "MinZoomLevel": 14,
