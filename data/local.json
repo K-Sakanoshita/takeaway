@@ -31,5 +31,32 @@
             "linkto": "http://coderdojo-takatsuki.hatenablog.com/",
             "divider": false
         }
-    ]
+    ],
+    "target": {
+        "TAK": {
+            "list": true,
+            "zoom": 15,
+            "icon": "./image/bentou.svg"
+        },
+        "DEL": {
+            "list": true,
+            "zoom": 15,
+            "icon": "./image/delivery.svg"
+        },
+        "DEF": {
+            "list": true,
+            "zoom": 15,
+            "icon": "./image/bentou.svg"
+        },
+        "VND": {
+            "list": false,
+            "zoom": 17,
+            "icon": "./image/vending.svg"
+        },
+        "LIB": {
+            "list": true,
+            "zoom": 15,
+            "icon": "./image/library.svg"
+        }
+    }
 }

@@ -27,14 +27,17 @@
                     <div class="row mb-1 align-items-center">
                         <div class="col-2 p-1">名前</div>
                         <div class="col-9 p-1"><span id="name" class="font-weight-bold"></span></div>
-                        <button type="button" class="btn btn-success col-1 p-0" id="open_gmap" onclick="Takeaway.openmap($('#osmid').html())">
+                        <button type="button" class="btn btn-success col-1 p-0" onclick="Takeaway.openmap($('#osmid').html())">
                             <i class="fas fa-map-marked-alt"></i>
                         </button>
                     </div>
                     <div class="row mb-1 align-items-center">
                         <div class="col-2 p-1">種類</div>
                         <div class="col-1 p-1"><img src="" class="icon" id="category-icon" /></div>
-                        <div class="col-9 p-1"><span id="category"></span></div>
+                        <div class="col-8 p-1"><span id="category"></span></div>
+                        <button type="button" class="btn btn-secondary col-1 p-0" onclick="Takeaway.sharemap($('#osmid').html())">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
                     </div>
                     <div class="row mb-1 align-items-center">
                         <div class="col-2 p-1">時間</div>
