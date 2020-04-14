@@ -23,7 +23,6 @@ const OverPass = {
 };
 
 $(document).ready(function () {
-
     console.log("Welcome to Takeaway.");
 
     // Load Conf file
