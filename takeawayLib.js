@@ -63,11 +63,24 @@ var Takeaway = (function () {
             $("#category-icon").attr("src", tags.takeaway_icon);
             $("#category").html(Takeaway.get_catname(tags));
 
-            let openhour = tags.opening_hours == null ? "-" : tags.opening_hours;
+            let openhour;
+            if (tags["opening_hours:covid19"]) {
+                openhour = tags.opening_hours;
+            } else {
+                openhour = tags.opening_hours == null ? "-" : tags.opening_hours;
+            }
             RegexPTN.forEach(val => { openhour = openhour.replace(val[0], val[1]) });
+            if (tags["opening_hours:covid19"]) {
+                openhour += Conf.category.suffix_covid19;
+            }
             $("#opening_hours").html(openhour);
 
-            let delname = tags.delivery == null ? "-" : Conf.category.delivery[tags.delivery];
+            let delname;
+            if (tags["delivery:covid19"] != null) {
+                delname = Conf.category.delivery[tags["delivery:covid19"]] + Conf.category.suffix_covid19;
+            } else {
+                delname = tags.delivery == null ? "-" : Conf.category.delivery[tags.delivery];
+            }
             $("#delivery").html(delname);
 
             let outseet = OUTSEETS.indexOf(tags.outdoor_seating) < 0 ? "-" : tags.outdoor_seating;

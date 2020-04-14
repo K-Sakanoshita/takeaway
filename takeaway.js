@@ -15,13 +15,15 @@ const OvGetError = "サーバーからのデータ取得に失敗しました。
 const OvServer = 'https://overpass.nchc.org.tw/api/interpreter'
 const FILES = ['modals.html', 'data/category-ja.json', 'data/datatables-ja.json', 'data/local.json'];
 const OverPass = {
-    TAK: ['node["takeaway"!="no"]["takeaway"]', 'way["takeaway"!="no"]["takeaway"]'],
-    DEL: ['node["delivery"!="no"]["delivery"]', 'way["delivery"!="no"]["delivery"]'],
+    TAK: ['node["takeaway"!="no"]["takeaway"]', 'way["takeaway"!="no"]["takeaway"]', 
+        'node["takeaway:covid19"!="no"]["takeaway:covid19"]', 'way["takeaway:covid19"!="no"]["takeaway:covid19"]'],
+    DEL: ['node["delivery"!="no"]["delivery"]', 'way["delivery"!="no"]["delivery"]',
+        'node["delivery:covid19"!="no"]["delivery:covid19"]', 'way["delivery:covid19"!="no"]["delivery:covid19"]'],
     DEF: ['node["shop"="bakery"]', 'way["shop"="bakery"]'],
     VND: ['node["amenity"="vending_machine"]["vending"="drinks"]'],
     LIB: ['node["amenity"="library"]', 'way["amenity"="library"]'],
 };
-
+https://overpass.nchc.org.tw/api/interpreter?data=[out:json][timeout:30];(node["takeaway"!="no"]["takeaway"](35.70163363455335,139.76181685924533,35.70829844334314,139.78043138980868);way["takeaway"!="no"]["takeaway"](35.70163363455335,139.76181685924533,35.70829844334314,139.78043138980868);node["takeaway:cv"!="no"]["takeaway:cv"](35.70163363455335,139.76181685924533,35.70829844334314,139.78043138980868);way["takeaway:cv"!="no"]["takeaway:cv"](35.70163363455335,139.76181685924533,35.70829844334314,139.78043138980868););out body;>;out skel qt;
 $(document).ready(function () {
 
     console.log("Welcome to Takeaway.");
