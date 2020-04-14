@@ -15,14 +15,15 @@ const OvGetError = "サーバーからのデータ取得に失敗しました。
 const OvServer = 'https://overpass.nchc.org.tw/api/interpreter'
 const FILES = ['modals.html', 'data/category-ja.json', 'data/datatables-ja.json', 'data/local.json'];
 const OverPass = {
-    TAK: ['node["takeaway"!="no"]["takeaway"]', 'way["takeaway"!="no"]["takeaway"]'],
-    DEL: ['node["delivery"!="no"]["delivery"]', 'way["delivery"!="no"]["delivery"]'],
+    TAK: ['node["takeaway"!="no"]["takeaway"]', 'way["takeaway"!="no"]["takeaway"]', 'node["takeaway:covid19"!="no"]["takeaway:covid19"]', 'way["takeaway:covid19"!="no"]["takeaway:covid19"]'],
+    DEL: ['node["delivery"!="no"]["delivery"]', 'way["delivery"!="no"]["delivery"]', 'node["delivery:covid19"!="no"]["delivery:covid19"]', 'way["delivery:covid19"!="no"]["delivery:covid19"]'],
     DEF: ['node["shop"="bakery"]', 'way["shop"="bakery"]'],
     VND: ['node["amenity"="vending_machine"]["vending"="drinks"]'],
     LIB: ['node["amenity"="library"]', 'way["amenity"="library"]'],
 };
 
 $(document).ready(function () {
+
     console.log("Welcome to Takeaway.");
 
     // Load Conf file
