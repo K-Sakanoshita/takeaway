@@ -50,7 +50,7 @@
 ## 謝辞
 * マニュアル作成からパッチ提供、[東京版サーバー](https://maripo.org/takeaway_tokyo/)を構築された maripo(Maripo GODA)氏
 * [草津版サーバー](https://kusatsu.5374.jp/takeaway/)を構築された Code for Kusatsuのみなさま
-* [播磨版サーバー](https://kusatsu.5374.jp/takeaway/)を構築された Code for Harimaのみなさま
+* [播磨版サーバー](https://codeforharima.github.io/takeaway/)を構築された Code for Harimaのみなさま
 * [高槻版サーバー](https://coderdojotakatsuki.github.io/takeaway/)を構築された CoderDojo高槻のみなさま
 * OpenStreetMap Japanのみなさま、
 * 感想やフィードバックを頂いたみなさま
