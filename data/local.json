@@ -39,7 +39,7 @@
         {
             "glot-model": "takeaway_tokyo",
             "linkto": "http://maripo.org/takeaway_tokyo/",
-            "divider": false
+            "divider": true
         },
         {
             "glot-model": "openstreetmap",
