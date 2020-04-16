@@ -52,7 +52,7 @@
 * [草津版サーバー](https://kusatsu.5374.jp/takeaway/)を構築された Code for Kusatsuのみなさま
 * [播磨版サーバー](https://codeforharima.github.io/takeaway/)を構築された Code for Harimaのみなさま
 * [高槻版サーバー](https://coderdojotakatsuki.github.io/takeaway/)を構築された CoderDojo高槻のみなさま
-* OpenStreetMap Japanのみなさま、
+* OpenStreetMap Japanのみなさま
 * 感想やフィードバックを頂いたみなさま
 
 ## 連絡先
