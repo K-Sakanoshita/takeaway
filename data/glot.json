@@ -7,6 +7,18 @@
         "ja": "CoderDojo高槻について",
         "en": "about CoderDojo Takatsuki"
     },
+    "takeaway_takatsuki": {
+        "ja": "高槻版",
+        "en": "Takatsuki Ver"
+    },
+    "takeaway_tokyo": {
+        "ja": "東京版",
+        "en": "Tokyo Ver"
+    },
+    "openstreetmap": {
+        "ja": "OpenStreetMap",
+        "en": "OpenStreetMap"
+    },
     "data_edit": {
         "ja": "店舗編集",
         "en": "EDIT"
