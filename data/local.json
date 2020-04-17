@@ -2,13 +2,13 @@
     "local": {
         "SplashImage": "image/splash.png",
         "DefaultCenter": [
-            34.85084,
-            135.62033
+            34.73194,
+            135.40769
         ],
-        "DefaultZoom": 15,
+        "DefaultZoom": 16,
         "MinZoomLevel": 15,
         "attribution": "<a href=\"https://www.maptiler.com/copyright/\" target=\"_blank\">© MapTiler</a> <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">© OpenStreetMap contributors</a>",
-        "style": "https://api.maptiler.com/maps/a5d0c749-4898-4e09-abf5-02e624764eb7/style.json?key=GExcEBXTAqhMFhRFLbRX"
+        "style": "https://api.maptiler.com/maps/jp-mierune-streets/style.json?key=lam4LHpdq6bsDBQPlvEI"
     },
     "menu": [
         {
