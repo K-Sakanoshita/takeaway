@@ -206,8 +206,17 @@ var Marker = (function () {
                 } else {
                     return -1;
                 }
-            })
-            return datas.filter( function ( x, i, self) { return self.indexOf( x) === i;});
+            });
+            let duplicates = [];
+            return datas.filter(
+                function ( x, i, self) {
+                    if( duplicates.indexOf( x.osmid) <= 0) {
+                        return false;
+                    }
+                    duplicates.push( x.osmid);
+                    return true;
+                }
+            );
         },
 
         center: (osmid) => {
