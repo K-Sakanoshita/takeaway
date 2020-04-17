@@ -210,11 +210,7 @@ var Marker = (function () {
             let duplicates = [];
             return datas.filter(
                 function ( x, i, self) {
-                    if( duplicates.indexOf( x.osmid) <= 0) {
-                        return false;
-                    }
-                    duplicates.push( x.osmid);
-                    return true;
+                    return self.findIndex( y => y.osmid == x.osmid) == i;
                 }
             );
         },
