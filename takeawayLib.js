@@ -88,8 +88,16 @@ var Takeaway = (function () {
             $("#phone").attr('href', tags.phone == null ? "" : "tel:" + tags.phone);
             $("#phone_view").html(tags.phone == null ? "-" : tags.phone);
 
-            $("#url").attr('href', tags.website == null ? "" : tags.website);
-            $("#url_view").html(tags.website == null ? "-" : tags.website);
+            if (tags["contact:website"] != null) {
+                $("#url").attr('href', tags["contact:website"]);
+                $("#url_view").html( tags["contact:website"]);
+            } else if (tags["website"] != null){
+                $("#url").attr('href', tags.website);
+                $("#url_view").html( tags.website);
+            } else {
+                $("#url").attr('href', "");
+                $("#url_view").html( "-");
+            }
 
             $("#description").html(tags.description == null ? "-" : tags.description);
 
