@@ -1,11 +1,11 @@
 {
     "title": {
-        "ja": "みんなでテイクアウトMAP <高槻版>",
-        "en": "Takeout MAP with everyone <Takatsuki Ver>"
+        "ja": "みんなでテイクアウトMAP <尼崎版>",
+        "en": "Takeout MAP with everyone <Amagasaki Ver>"
     },
     "owner": {
-        "ja": "CoderDojo高槻について",
-        "en": "about CoderDojo Takatsuki"
+        "ja": "コードフォー尼崎について",
+        "en": "about Code for Amagasaki"
     },
     "data_edit": {
         "ja": "店舗編集",
