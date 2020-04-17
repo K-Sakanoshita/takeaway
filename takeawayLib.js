@@ -207,7 +207,7 @@ var Marker = (function () {
                     return -1;
                 }
             })
-            return datas;
+            return datas.filter( function ( x, i, self) { return self.indexOf( x) === i;});
         },
 
         center: (osmid) => {
