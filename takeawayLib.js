@@ -207,7 +207,6 @@ var Marker = (function () {
                     return -1;
                 }
             });
-            let duplicates = [];
             return datas.filter(
                 function ( x, i, self) {
                     return self.findIndex( y => y.osmid == x.osmid) == i;
