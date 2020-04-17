@@ -29,6 +29,21 @@
         {
             "glot-model": "owner",
             "linkto": "http://coderdojo-takatsuki.hatenablog.com/",
+            "divider": true
+        },
+        {
+            "glot-model": "takeaway_takatsuki",
+            "linkto": "https://k-sakanoshita.github.io/takeaway/",
+            "divider": false
+        },
+        {
+            "glot-model": "takeaway_tokyo",
+            "linkto": "http://maripo.org/takeaway_tokyo/",
+            "divider": true
+        },
+        {
+            "glot-model": "openstreetmap",
+            "linkto": "https://www.openstreetmap.org/",
             "divider": false
         }
     ],
