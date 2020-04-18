@@ -17,7 +17,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2><span class="modal-title" glot-model="modal_title">テイクアウト詳細情報</span></h2>
-                <button type="button" class="close ml-2" data-dismiss="modal" aria-label="Close">
+                <button class="close ml-2" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -27,7 +27,7 @@
                     <div class="row mb-1 align-items-center">
                         <div class="col-2 p-1">名前</div>
                         <div class="col-9 p-1"><span id="name" class="font-weight-bold"></span></div>
-                        <button type="button" class="btn btn-success col-1 p-0" onclick="Takeaway.openmap($('#osmid').html())">
+                        <button class="btn btn-success col-1 p-0" onclick="Takeaway.openmap($('#osmid').html())">
                             <i class="fas fa-map-marked-alt"></i>
                         </button>
                     </div>
@@ -35,7 +35,7 @@
                         <div class="col-2 p-1">種類</div>
                         <div class="col-1 p-1"><img src="" class="icon" id="category-icon" /></div>
                         <div class="col-8 p-1"><span id="category"></span></div>
-                        <button type="button" class="btn btn-secondary col-1 p-0" onclick="Takeaway.sharemap($('#osmid').html())">
+                        <button class="btn btn-secondary col-1 p-0" onclick="Takeaway.sharemap($('#osmid').html())">
                             <i class="fas fa-share-alt"></i>
                         </button>
                     </div>
@@ -54,9 +54,11 @@
                         <div class="col-10 p-1"><a id="phone"><span id="phone_view"></span></a></div>
                     </div>
                     <div class="row mb-1 align-items-center">
-                        <div class="col-2 p-1">Web</div>
-                        <div class="col-10 p-1"><a id="url"><span id="url_view"></a></span>
-                        </div>
+                        <div class="col-2 p-1">公式</div>
+                        <button class="btn btn-secondary col-1 p-0 mr-2"><a id="url" class="icon" target="_blank"><i class="fas fa-home"></i></a></button>
+                        <button class="btn btn-warning col-1 p-0 mr-2"><a id="sns_instagram" class="icon" target="_blank"><i class="fab fa-instagram"></i></a></button>
+                        <button class="btn btn-info col-1 p-0 mr-2"><a id="sns_twitter" class="icon" target="_blank"><i class="fab fa-twitter"></i></a></button>
+                        <button class="btn btn-primary col-1 p-0 mr-2"><a id="sns_facebook" class="icon" target="_blank"><i class="fab fa-facebook-f"></i></a></button>
                     </div>
                     <div class="row mb-1 align-items-center">
                         <div class="col-2 p-1">備考</div>
@@ -65,7 +67,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary mx-auto" data-dismiss="modal">
+                <button class="btn btn-primary mx-auto" data-dismiss="modal">
                     <i class="far fa-window-close"></i><span class="ml-2" glot-model="modal_close"></span>
                 </button>
             </div>

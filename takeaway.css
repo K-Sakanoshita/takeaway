@@ -123,6 +123,10 @@ img.icon {
     height: 16px;
 }
 
+a.icon {
+    color: white;    
+}
+
 span.icon {
     margin-left: 4px;
     font-size: 14px;

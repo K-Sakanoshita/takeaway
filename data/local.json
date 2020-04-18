@@ -14,7 +14,7 @@
         {
             "glot-model": "id_edit_manual",
             "linkto": "https://maripo.org/osm_beginners_guide/",
-            "divider": true
+            "divider": false
         },
         {
             "glot-model": "mapcontrib_edit_manual",
@@ -27,23 +27,13 @@
             "divider": true
         },
         {
-            "glot-model": "owner",
-            "linkto": "http://coderdojo-takatsuki.hatenablog.com/",
-            "divider": true
-        },
-        {
-            "glot-model": "takeaway_takatsuki",
-            "linkto": "https://k-sakanoshita.github.io/takeaway/",
+            "glot-model": "openstreetmap",
+            "linkto": "https://www.openstreetmap.org/",
             "divider": false
         },
         {
-            "glot-model": "takeaway_tokyo",
-            "linkto": "http://maripo.org/takeaway_tokyo/",
-            "divider": true
-        },
-        {
-            "glot-model": "openstreetmap",
-            "linkto": "https://www.openstreetmap.org/",
+            "glot-model": "owner",
+            "linkto": "https://github.com/K-Sakanoshita/takeaway",
             "divider": false
         }
     ],

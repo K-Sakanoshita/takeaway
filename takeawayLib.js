@@ -88,8 +88,34 @@ var Takeaway = (function () {
             $("#phone").attr('href', tags.phone == null ? "" : "tel:" + tags.phone);
             $("#phone_view").html(tags.phone == null ? "-" : tags.phone);
 
-            $("#url").attr('href', tags.website == null ? "" : tags.website);
-            $("#url_view").html(tags.website == null ? "-" : tags.website);
+            let website = tags["contact:website"] == null ? tags["website"] : tags["contact:website"];
+            let sns_instagram = tags["contact:instagram"] == null ? tags["instagram"] : tags["contact:instagram"];
+            let sns_twitter = tags["contact:twitter"] == null ? tags["twitter"] : tags["contact:twitter"];
+            let sns_facebook = tags["contact:facebook"] == null ? tags["facebook"] : tags["contact:facebook"];
+            if (website == null) {
+                $("#url").parent().hide();
+            } else {
+                $("#url").attr('href', website);
+                $("#url").parent().show();
+            };
+            if (sns_instagram == null) {
+                $("#sns_instagram").parent().hide();
+            } else {
+                $("#sns_instagram").attr('href', sns_instagram);
+                $("#sns_instagram").parent().show();
+            };
+            if (sns_twitter == null) {
+                $("#sns_twitter").parent().hide();
+            } else {
+                $("#sns_twitter").attr('href', sns_twitter);
+                $("#sns_twitter").parent().show();
+            };
+            if (sns_facebook == null) {
+                $("#sns_facebook").parent().hide();
+            } else {
+                $("#sns_facebook").attr('href', sns_facebook);
+                $("#sns_facebook").parent().show();
+            };
 
             $("#description").html(tags.description == null ? "-" : tags.description);
 
