@@ -206,8 +206,12 @@ var Marker = (function () {
                 } else {
                     return -1;
                 }
-            })
-            return datas;
+            });
+            return datas.filter(
+                function ( x, i, self) {
+                    return self.findIndex( y => y.osmid == x.osmid) == i;
+                }
+            );
         },
 
         center: (osmid) => {
