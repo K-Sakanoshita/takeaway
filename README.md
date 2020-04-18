@@ -16,13 +16,13 @@
 ## 構築方法
 1. [本リポジトリ](https://github.com/K-Sakanoshita/takeaway)を任意の所へとforkする
 2. forkしたリポジトリの設定(Settings)を開き、「GitHub Pages」を有効にする
-  2. 標準のURL(～.github.io/takeaway)でも、カスタムドメインのどちらでも動作する
+  - 標準のURL(～.github.io/takeaway)でも、カスタムドメインのどちらでも動作する
 3. 公開したGitHub Pagesを開き、「みんなでテイクアウトMAP」が表示されることを確認する
-  3. 「404 ERROR」が出ている場合、ご利用のWebブラウザキャッシュをクリアすると解消する
+  - 「404 ERROR」が出ている場合、ご利用のWebブラウザキャッシュをクリアすると解消する
 4. [MapTiler](https://www.maptiler.com/)を開き、無料アカウントを作成する
-  4. アクセス数が非常に多いサイトを構築するつもりであれば、有償プランの選択を検討する
-  4. OverPassサーバーはボランティア運営。常に高い負荷を与えるなら独自構築も検討する
-  4. 「アクセス数の多さ」の判断が難しいが、個人・地域コミュニティの通常利用程度は大丈夫
+  - アクセス数が非常に多いサイトを構築するつもりであれば、有償プランの選択を検討する
+  - OverPassサーバーはボランティア運営。常に高い負荷を与えるなら独自構築も検討する
+  - 「アクセス数の多さ」の判断が難しいが、個人・地域コミュニティの通常利用程度は大丈夫
 5. Maptilerにログインし、「Maps」から好みのマップを探す or 新しいマップを作成する
 6. 探した or 作ったマップを開き、「Use vector style」欄のアドレスをコピーする
 7. 手順"1."でforkさせたリポジトリ内にある「data/local.json」ファイルを開く
@@ -49,9 +49,11 @@
   
 ## 謝辞
 * マニュアル作成からパッチ提供、[東京版サーバー](https://maripo.org/takeaway_tokyo/)を構築された maripo(Maripo GODA)氏
+* パッチ提供、[尼崎版サーバー](https://codeforamagasaki.github.io/takeaway/)を構築された  tadanet3(Masayuki Tada)氏
 * [草津版サーバー](https://kusatsu.5374.jp/takeaway/)を構築された Code for Kusatsuのみなさま
 * [播磨版サーバー](https://codeforharima.github.io/takeaway/)を構築された Code for Harimaのみなさま
 * [高槻版サーバー](https://coderdojotakatsuki.github.io/takeaway/)を構築された CoderDojo高槻のみなさま
+* お弁当のアイコン(image/bentou.svg)を作ってくれたうちの妻
 * OpenStreetMap Japanのみなさま
 * 感想やフィードバックを頂いたみなさま
 

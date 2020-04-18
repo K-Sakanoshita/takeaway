@@ -1,230 +1,51 @@
 "use strict";
 
-var Takeaway = (function () {
-
-    var _status = "initialize";
-    const OUTSEETS = ["yes", "no"]; // outseetタグ用
-    const RegexPTN = [[/Mo/g, "月"], [/Tu/g, "火"], [/We/g, "水"], [/Th/g, "木"], [/Fr/g, "金"],
-    [/Sa/g, "土"], [/Su/g, "日"], [/;/g, "<br>"], [/PH/g, "祝日"], [/off/g, "休業"], [/24\/7/g, "24時間営業"]];
+// PoiData Control
+var PoiCont = (function () {
+    var PoiData = { geojson: [], targets: [] };     // OvPassの応答(features抜き)と対象Keyの保存
+    var latlngs = {};                               // 緯度経度  osmid: {lat,lng}
+    var geoidx = {};                                // osmidからgeojsonのindexリスト
 
     return {
-        status: () => { return _status }, // ステータスを返す
-        get: function (keys, callback) { // 情報（アイコンなど）を地図に追加
-            console.log("Takeaway: get start...");
-            _status = "get";
-            var targets = [];
-            if (keys == undefined || keys == "") {
-                for (let key in Conf.target) targets.push(key);
-            } else {
-                targets = keys;
-            };
-            if (map.getZoom() < Conf.local.MinZoomLevel) {
-                console.log("Takeaway: get end(Conf.local.MinZoomLevel).");
-                Takeaway.update();
-                callback();
-            } else {
-                OvPassCnt.get(targets).then(geojson => {
-                    targets.forEach(key => { PoiData[key].geojson = geojson[key] });
-                    Takeaway.update();
-                    console.log("Takeaway: get end.");
-                    callback();
-                }).catch((jqXHR, statusText, errorThrown) => {
-                    console.log("Takeaway: get Error. " + statusText);
-                    Takeaway.update();
-                    callback();
-                });
-            }
-        },
-
-        // Update Takeout Map Icon
-        update: function (targetkey) {
-            let ZoomLevel = map.getZoom();
-            if (targetkey == "" || typeof (targetkey) == "undefined") { // no targetkey then update all layer
-                for (let key in Conf.target) {
-                    Marker.all_delete(key);
-                    if (Conf.target[key].zoom <= ZoomLevel) Marker.set(key);
+        // save answer from PvServer(geojson and target keys)
+        set: function (pois) {      // pois: {geojson: [],targets: []}
+            PoiData = { geojson: pois.geojson, targets: pois.targets };
+            PoiData.geojson.forEach(function (node, node_idx) {
+                let tags = node.properties;
+                if (node.geometry.type == "Polygon") {
+                    latlngs[tags.id] = { "lat": node.geometry.coordinates[0][0][1], "lng": node.geometry.coordinates[0][0][0] };
+                } else {
+                    latlngs[tags.id] = { "lat": node.geometry.coordinates[1], "lng": node.geometry.coordinates[0] };
                 }
-            } else {
-                Marker.all_delete(targetkey);
-                if (Conf.target[targetkey].zoom <= ZoomLevel) Marker.set(targetkey);
-            }
-            _status = "";
+                geoidx[tags.id] = node_idx;
+            });
         },
-
-        view: function (tags) {
-            _status = "view";
-            DataList.select(tags.id);
-
-            let osmid = tags.id.replace('/', "-");
-            history.replaceState('', '', location.pathname + "?" + osmid + location.hash);
-
-            $("#osmid").html(tags.id);
-            $("#name").html(tags.name == null ? "-" : tags.name);
-            $("#category-icon").attr("src", tags.takeaway_icon);
-            $("#category").html(Takeaway.get_catname(tags));
-
-            let openhour;
-            if (tags["opening_hours:covid19"]) {
-                openhour = tags.opening_hours;
-            } else {
-                openhour = tags.opening_hours == null ? "-" : tags.opening_hours;
-            }
-            RegexPTN.forEach(val => { openhour = openhour.replace(val[0], val[1]) });
-            if (tags["opening_hours:covid19"]) { openhour += Conf.category.suffix_covid19 }
-            $("#opening_hours").html(openhour);
-
-            let delname;
-            if (tags["delivery:covid19"] != null) {
-                delname = Conf.category.delivery[tags["delivery:covid19"]] + Conf.category.suffix_covid19;
-            } else {
-                delname = tags.delivery == null ? "-" : Conf.category.delivery[tags.delivery];
-            }
-            $("#delivery").html(delname);
-
-            let outseet = OUTSEETS.indexOf(tags.outdoor_seating) < 0 ? "-" : tags.outdoor_seating;
-            $("#outdoor_seating").html(outseet);
-            if (outseet !== "-") $("#outdoor_seating").attr("glot-model", "outdoor_seating_" + outseet);
-
-            $("#phone").attr('href', tags.phone == null ? "" : "tel:" + tags.phone);
-            $("#phone_view").html(tags.phone == null ? "-" : tags.phone);
-
-            let website = tags["contact:website"] == null ? tags["website"] : tags["contact:website"];
-            let sns_instagram = tags["contact:instagram"] == null ? tags["instagram"] : tags["contact:instagram"];
-            let sns_twitter = tags["contact:twitter"] == null ? tags["twitter"] : tags["contact:twitter"];
-            let sns_facebook = tags["contact:facebook"] == null ? tags["facebook"] : tags["contact:facebook"];
-            if (website == null) {
-                $("#url").parent().hide();
-            } else {
-                $("#url").attr('href', website);
-                $("#url").parent().show();
-            };
-            if (sns_instagram == null) {
-                $("#sns_instagram").parent().hide();
-            } else {
-                $("#sns_instagram").attr('href', sns_instagram);
-                $("#sns_instagram").parent().show();
-            };
-            if (sns_twitter == null) {
-                $("#sns_twitter").parent().hide();
-            } else {
-                $("#sns_twitter").attr('href', sns_twitter);
-                $("#sns_twitter").parent().show();
-            };
-            if (sns_facebook == null) {
-                $("#sns_facebook").parent().hide();
-            } else {
-                $("#sns_facebook").attr('href', sns_facebook);
-                $("#sns_facebook").parent().show();
-            };
-
-            $("#description").html(tags.description == null ? "-" : tags.description);
-
-            glot.render();
-            $('#PoiView_Modal').modal({ backdrop: 'static', keyboard: true });
-
-            let hidden = e => {
-                _status = "";
-                history.replaceState('', '', location.pathname + location.hash);
-                $('#PoiView_Modal').modal('hide');
-            };
-            $('#PoiView_Modal').one('hidePrevented.bs.modal', hidden);
-            $('#PoiView_Modal').one('hidden.bs.modal', hidden);
+        get_target: function (targets) {        // 指定したtargetのgeojsonと緯度経度を返す
+            return poi_filter(targets);
         },
-
-        openmap: osmid => {
-            let poi = Marker.get(osmid);
-            let zoom = map.getZoom();
-            let name = poi.tag.name == undefined ? "" : "search/" + poi.tag.name + "/";
-            window.open('https://www.google.com/maps/' + name + "@" + poi.ll.lat + ',' + poi.ll.lng + ',' + zoom + 'z');
+        get_osmid: function (osmid) {           // osmidを元にgeojsonと緯度経度、targetを返す
+            let idx = geoidx[osmid];
+            return { geojson: PoiData.geojson[idx], latlng: latlngs[osmid], target: PoiData.targets[idx] };
         },
-
-        sharemap: osmid => {
-            let _osmid = osmid.replace('/', "-");
-            let cpboard = location.origin + location.pathname + "?" + _osmid + location.hash;
-            $(document.body).append("<textarea id=\"copyTarget\" style=\"position:absolute; left:-9999px; top:0px;\">" + cpboard + "</textarea>");
-            let obj = document.getElementById("copyTarget");
-            let range = document.createRange();
-            range.selectNode(obj);
-            window.getSelection().addRange(range);
-            document.execCommand('copy');
-            $("#copyTarget").remove();
-        },
-
-        // get Category Name from Conf.category(Global Variable)
-        get_catname: function (tags) {
+        get_catname: function (tags) {          // get Category Name from Conf.category(Global Variable)
             let catname = "";
-            var key1 = tags.amenity == undefined ? "shop" : "amenity";
-            var key2 = tags[key1] == undefined ? "" : tags[key1];
-            if (key2 !== "") { // known tags
+            let key1 = tags.amenity == undefined ? "shop" : "amenity";
+            let key2 = tags[key1] == undefined ? "" : tags[key1];
+            if (key2 !== "") {                  // known tags
                 catname = Conf.category[key1][key2];
                 if (catname == undefined) catname = "";
             }
             return catname;
         },
-
-        // 2点間の距離を計算(参考: https://qiita.com/chiyoyo/items/b10bd3864f3ce5c56291)
-        calc_between: function (ll1, ll2) {
-            let pi = Math.PI, r = 6378137.0; // πと赤道半径
-            let radLat1 = ll1.lat * (pi / 180); // 緯度１
-            let radLon1 = ll1.lng * (pi / 180); // 経度１
-            let radLat2 = ll2.lat * (pi / 180); // 緯度２
-            let radLon2 = ll2.lng * (pi / 180); // 経度２
-            let averageLat = (radLat1 - radLat2) / 2;
-            let averageLon = (radLon1 - radLon2) / 2;
-            return r * 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(averageLat), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(averageLon), 2)));
-        }
-    }
-})();
-
-// make Marker
-var Marker = (function () {
-    var PointUp = { radius: 8, color: '#000080', fillColor: '#0000A0', Opacity: 0.1, fillOpacity: 0.1 };
-    var latlngs = {},
-        alltags = {}; // 緯度経度とタグ(key=osmid)
-
-    return {
-        get: osmid => { return { ll: latlngs[osmid], tag: alltags[osmid] } },
-        set: function (key) {
-            let geojson = PoiData[key].geojson;
-            let markers = [];
-            if (geojson !== undefined) {
-                geojson.features.forEach(function (node) {
-                    let tags = node.properties;
-                    let icon = L.divIcon({ className: 'icon', html: '<img class="icon" src="' + Conf.target[key].icon + '">' });
-                    if (node.geometry.type == "Polygon") {
-                        latlngs[tags.id] = { "lat": node.geometry.coordinates[0][0][1], "lng": node.geometry.coordinates[0][0][0] };
-                    } else {
-                        latlngs[tags.id] = { "lat": node.geometry.coordinates[1], "lng": node.geometry.coordinates[0] };
-                    }
-                    alltags[tags.id] = tags;
-                    alltags[tags.id].takeaway_icon = Conf.target[key].icon;   // icon情報を埋め込み(詳細情報表示で利用)
-                    markers.push(L.marker(new L.LatLng(latlngs[tags.id].lat, latlngs[tags.id].lng), { icon: icon, draggable: false }));
-                    markers[markers.length - 1].addTo(map).on('click', e => Takeaway.view(e.target.takeaway_tags));
-                    markers[markers.length - 1].takeaway_tags = tags;
-                });
-                PoiData[key].markers = markers;
-            }
-        },
-
-        all_delete: function (key) { // all delete
-            if (PoiData[key].markers !== undefined) {
-                PoiData[key].markers.forEach(marker => marker.remove(map));
-                PoiData[key].markers = undefined;
-            }
-        },
-
-        list: function (targets) {
+        list: function (targets) {              // DataTables向きのJsonデータリストを出力
+            let pois = poi_filter(targets);     // targetsに指定されたpoiのみフィルター
             let datas = [];
-            targets.forEach(key => {
-                if (PoiData[key].markers !== undefined) {
-                    PoiData[key].markers.forEach(marker => {
-                        let tags = marker.takeaway_tags;
-                        let name = tags.name == undefined ? "-" : tags.name;
-                        let category = Takeaway.get_catname(tags);
-                        let between = Math.round(Takeaway.calc_between(latlngs[tags.id], map.getCenter()));
-                        datas.push({ "osmid": tags.id, "name": name, "category": category, "between": between });
-                    })
-                };
+            pois.geojson.forEach(node => {
+                let tags = node.properties;
+                let name = tags.name == undefined ? "-" : tags.name;
+                let category = PoiCont.get_catname(tags);
+                let between = Math.round(PoiCont.calc_between(latlngs[tags.id], map.getCenter()));
+                datas.push({ "osmid": tags.id, "name": name, "category": category, "between": between });
             });
             datas.sort((a, b) => {
                 if (a.between > b.between) {
@@ -233,17 +54,73 @@ var Marker = (function () {
                     return -1;
                 }
             });
-            return datas.filter(
-                function ( x, i, self) {
-                    return self.findIndex( y => y.osmid == x.osmid) == i;
-                }
-            );
+            return datas;
+        },
+        calc_between: function (ll1, ll2) {         // 2点間の距離を計算(参考: https://qiita.com/chiyoyo/items/b10bd3864f3ce5c56291)
+            let pi = Math.PI, r = 6378137.0;        // πと赤道半径
+            let radLat1 = ll1.lat * (pi / 180);     // 緯度１
+            let radLon1 = ll1.lng * (pi / 180);     // 経度１
+            let radLat2 = ll2.lat * (pi / 180);     // 緯度２
+            let radLon2 = ll2.lng * (pi / 180);     // 経度２
+            let averageLat = (radLat1 - radLat2) / 2;
+            let averageLon = (radLon1 - radLon2) / 2;
+            return r * 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(averageLat), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(averageLon), 2)));
+        }
+    }
+
+    // targetsに指定されたpoiのみフィルター
+    function poi_filter(targets) {
+        let pois = PoiData.geojson.filter(function (geojson_val, geojson_idx) {
+            let found = false;
+            for (let target_idx in PoiData.targets[geojson_idx]) {
+                if (targets.includes(PoiData.targets[geojson_idx][target_idx])) {
+                    found = true;
+                    break;
+                };
+            };
+            return found;
+        });
+        let lls = [];
+        pois.forEach(function (node) {
+            let tags = node.properties;
+            lls.push(latlngs[tags.id]);
+        });
+        return { geojson: pois, latlng: lls };
+    };
+})();
+
+// make Marker
+var Marker = (function () {
+    var PointUp = { radius: 8, color: '#000080', fillColor: '#0000A0', Opacity: 0.1, fillOpacity: 0.1 };
+    var markers = [];
+
+    return {
+        set: function (target) {
+            markers[target] = [];
+            let pois = PoiCont.get_target(target);
+            if (pois.geojson !== undefined) {
+                pois.geojson.forEach(function (node, idx) {
+                    let tags = node.properties;
+                    let icon = L.divIcon({ className: 'icon', html: '<img class="icon" src="' + Conf.target[target].icon + '">' });
+                    tags.takeaway_icon = Conf.target[target].icon;   // icon情報を埋め込み(詳細情報表示で利用)
+                    markers[target].push(L.marker(new L.LatLng(pois.latlng[idx].lat, pois.latlng[idx].lng), { icon: icon, draggable: false }));
+                    markers[target][markers[target].length - 1].addTo(map).on('click', e => Takeaway.view(e.target.takeaway_id));
+                    markers[target][markers[target].length - 1].takeaway_id = tags.id;
+                });
+            }
+        },
+
+        all_delete: function (target) { // all delete
+            if (markers[target] !== undefined) {
+                markers[target].forEach(marker => marker.remove(map));
+                markers[target] = [];
+            }
         },
 
         center: (osmid) => {
-            map.panTo(latlngs[osmid], { animate: true, easeLinearity: 0.1, duration: 0.5 });
+            map.panTo(PoiCont.get_osmid(osmid).latlng, { animate: true, easeLinearity: 0.1, duration: 0.5 });
             PointUp.radius = Math.pow(2, 21 - map.getZoom());
-            let circle = L.circle(latlngs[osmid], PointUp).addTo(map);
+            let circle = L.circle(PoiCont.get_osmid(osmid).latlng, PointUp).addTo(map);
             setTimeout(() => map.removeLayer(circle), 2000);
         },
 
@@ -251,30 +128,32 @@ var Marker = (function () {
             console.log("moveend: event start.");
             LL.NW = map.getBounds().getNorthWest();
             LL.SE = map.getBounds().getSouthEast();
-            switch (LL.busy) {
-                case true:
-                    clearTimeout(LL.id);    // no break and cancel old timer.
-                default:
-                    LL.busy = true;
-                    if (Takeaway.status() == "initialize") {
-                        Takeaway.get("", () => {
-                            DataList.view(DataList_Targets);
-                            DisplayStatus.splash(false);
-                            if (location.search !== "") {    // 引数がある場合
-                                let osmid = location.search.replace(/[?&]fbclid.*/, '');
-                                osmid = osmid.replace('-', '/');
-                                osmid = osmid.replace('=', '');
-                                let poi = Marker.get(osmid.slice(1));
-                                if (poi.tag !== undefined) Takeaway.view(poi.tag);
-                            }
-                            LL.busy = false;
-                        });
-                    } else {
-                        LL.id = setTimeout(() => {
-                            Takeaway.get("", () => { DataList.view(DataList_Targets) });
-                            LL.busy = false;
-                        }, 1000);
-                    }
+            let targets = Object.keys(Conf.target).filter(key => { return Conf.target[key].list });
+
+            if (LL.busy) {
+                clearTimeout(LL.id);    // no break and cancel old timer.
+                LL.busy = false;
+            } else {
+                LL.busy = true;
+                if (Takeaway.status() == "initialize") {
+                    Takeaway.get("", () => {
+                        DataList.view(targets);
+                        DisplayStatus.splash(false);
+                        if (location.search !== "") {    // 引数がある場合
+                            let osmid = location.search.replace(/[?&]fbclid.*/, '');
+                            osmid = osmid.replace('-', '/');
+                            osmid = osmid.replace('=', '');
+                            let tags = PoiCont.get_osmid(osmid.slice(1)).geojson.properties;
+                            if (tags !== undefined) Takeaway.view(tags.id);
+                        }
+                        LL.busy = false;
+                    });
+                } else {
+                    LL.id = setTimeout(() => {
+                        Takeaway.get("", () => { DataList.view(targets) });
+                        LL.busy = false;
+                    }, 1000);
+                }
             }
         }
     }
@@ -317,7 +196,7 @@ var DataList = (function () {
         view: function (targets) { // PoiDataのリスト表示
             DataList.lock(true);
             if (table !== undefined) table.destroy();
-            let result = Marker.list(targets);
+            let result = PoiCont.list(targets);
             table = $('#tableid').DataTable({
                 "autoWidth": true,
                 "columns": [{ title: "名前", data: "name", "width": "40%" }, { title: "種類", data: "category", "width": "30%" }, { title: "距離", data: "between", "width": "20%" },],
@@ -343,17 +222,16 @@ var DataList = (function () {
             let osmid = table.row(0).data() == undefined ? undefined : table.row(0).data().osmid;
             if (osmid !== undefined) DataList.select(osmid); // osmidがあれば1行目を選択
 
+            table.off('select');
             table.on('select', function (e, dt, type, indexes) {
                 if (_lock) {
                     table.row(indexes).deselect();
                 } else if (_status == "") {
                     var data = table.row(indexes).data();
-                    table.off('select');
                     Marker.center(data.osmid); // do something with the ID of the selected items
                 }
             });
             DataList.lock(false);
-
         },
 
         select: function (osmid) { // アイコンをクリックした時にデータを選択
@@ -379,8 +257,7 @@ var DataList = (function () {
 
 // OverPass Server Control(Width easy cache)
 var OvPassCnt = (function () {
-
-    var Cache = {}; // geojson cache area
+    var Cache = { "geojson": [], "targets": [] };   // Cache variable
     var LLc = { "NW": { "lat": 0, "lng": 0 }, "SE": { "lat": 0, "lng": 0 } }; // latlng cache area
 
     return {
@@ -390,16 +267,12 @@ var OvPassCnt = (function () {
                 let LayerCounts = Object.keys(Conf.target).length;
                 if (LL.NW.lat < LLc.NW.lat && LL.NW.lng > LLc.NW.lng &&
                     LL.SE.lat > LLc.SE.lat && LL.NW.lat < LLc.NW.lat) {
-                    // Within Cache range
-                    console.log("OvPassCnt: Cache Hit.");
-                    let RetCache = {};
-                    targets.forEach(key => { RetCache[key] = Cache[key] });
-                    resolve(RetCache);
+                    console.log("OvPassCnt: Cache Hit.");       // Within Cache range
+                    resolve(Cache);
 
                 } else {
-                    // Not With Cache range
-                    DisplayStatus.progress(0);
-                    Cache = {}; // Cache Clear
+                    DisplayStatus.progress(0);                  // Not With Cache range
+                    Cache = { "geojson": [], "targets": [] };
                     let magni = (ZoomLevel - Conf.local.MinZoomLevel) < 1 ? 0.125 : (ZoomLevel - Conf.local.MinZoomLevel) / 4;
                     let offset_lat = (LL.NW.lat - LL.SE.lat) * magni;
                     let offset_lng = (LL.SE.lng - LL.NW.lng) * magni;
@@ -414,7 +287,7 @@ var OvPassCnt = (function () {
                         Progress = 0;
                     targets.forEach(key => {
                         let query = "";
-                        for (let ovpass in OverPass[key]) { query += OverPass[key][ovpass] + maparea; }
+                        for (let ovpass in Conf.target[key].ovpass) { query += Conf.target[key].ovpass[ovpass] + maparea; }
                         let url = OvServer + '?data=[out:json][timeout:30];(' + query + ');out body;>;out skel qt;';
                         console.log("GET: " + url);
                         jqXHRs.push($.get(url, () => { DisplayStatus.progress(Math.ceil(((++Progress + 1) * 100) / LayerCounts)) }));
@@ -429,11 +302,24 @@ var OvPassCnt = (function () {
                             };
                             let osmxml = arguments[i++][0]
                             let geojson = osmtogeojson(osmxml, { flatProperties: true });
-                            geojson.features.forEach(function (val) { delete val.id; }); // delete Unnecessary osmid
-                            geojson = geojson.features.filter(val => { // 非対応の店舗はキャッシュに載せない
-                                if (Takeaway.get_catname(val.properties) !== "") return val;
+                            geojson = geojson.features.filter(val => {      // 非対応の店舗はキャッシュに載せない
+                                if (PoiCont.get_catname(val.properties) !== "") return val;
                             });
-                            Cache[key] = { "features": geojson };
+                            geojson.forEach(function (val1) {
+                                delete val1.id;                             // delete Unnecessary osmid
+                                let cidx = Cache.geojson.findIndex(function (val2) {
+                                    if (val2.properties.id == val1.properties.id) return true;
+                                });
+                                if (cidx === -1) {                          // キャッシュが無い時は更新
+                                    Cache.geojson.push(val1);
+                                    cidx = Cache.geojson.length - 1;
+                                };
+                                if (Cache.targets[cidx] == undefined) {  // 
+                                    Cache.targets[cidx] = [key];
+                                } else if (Cache.targets[cidx].indexOf(key) === -1) {
+                                    Cache.targets[cidx].push(key);
+                                };
+                            });
                         });
                         console.log("OvPassCnt: Cache Update");
                         DisplayStatus.progress(0);

@@ -2,11 +2,8 @@
 "use strict";
 
 // Global Variable
-var map, gl, hash, glot;    // leaflet系(map, gl, hash) 翻訳(glot)
-var PoiData = {};           // {key: {geojson,marker}}
-var LL = {};                // latlng
-var Conf = {}               // Download Config
-var DataList_Targets = [];  // リストに表示する対象物
+var map, gl, hash, glot;        // leaflet系(map, gl, hash) 翻訳(glot)
+var LL = {}, Conf = {}          // latlng,Config
 
 // consts
 const MoreZoomMsg = "ズームすると店舗が表示されます。";
@@ -14,13 +11,6 @@ const OvGetError = "サーバーからのデータ取得に失敗しました。
 // const OvServer = 'https://overpass.kumi.systems/api/interpreter' // or 'https://overpass-api.de/api/interpreter' or 'https://overpass.nchc.org.tw/api/interpreter'
 const OvServer = 'https://overpass.nchc.org.tw/api/interpreter'
 const FILES = ['modals.html', 'data/category-ja.json', 'data/datatables-ja.json', 'data/local.json'];
-const OverPass = {
-    TAK: ['node["takeaway"!="no"]["takeaway"]', 'way["takeaway"!="no"]["takeaway"]', 'node["takeaway:covid19"!="no"]["takeaway:covid19"]', 'way["takeaway:covid19"!="no"]["takeaway:covid19"]'],
-    DEL: ['node["delivery"!="no"]["delivery"]', 'way["delivery"!="no"]["delivery"]', 'node["delivery:covid19"!="no"]["delivery:covid19"]', 'way["delivery:covid19"!="no"]["delivery:covid19"]'],
-    DEF: ['node["shop"="bakery"]', 'way["shop"="bakery"]'],
-    VND: ['node["amenity"="vending_machine"]["vending"="drinks"]'],
-    LIB: ['node["amenity"="library"]', 'way["amenity"="library"]'],
-};
 
 $(document).ready(function () {
 
@@ -30,7 +20,6 @@ $(document).ready(function () {
     let jqXHRs = [];
     for (let key in FILES) { jqXHRs.push($.get(FILES[key])) };
     $.when.apply($, jqXHRs).always(function () {
-
         // initialize variable
         $("#Modals").html(arguments[0][0]);
         for (let idx = 1; idx <= 3; idx++) {
@@ -40,11 +29,6 @@ $(document).ready(function () {
                 Object.keys(arg[key1]).forEach((key2) => Conf[key1][key2] = arg[key1][key2]);
             });
         };
-        DataList_Targets = Object.keys(Conf.target).filter(key => {
-            PoiData[key] = {};
-            return Conf.target[key].list;
-        });
-
         DisplayStatus.window_resize();      // Set Window Size
         DisplayStatus.splash(true);         // Splash Screen
         DisplayStatus.make_menu();          // Menu
@@ -55,7 +39,7 @@ $(document).ready(function () {
         map = L.map('mapid', { center: Conf.local.DefaultCenter, zoom: Conf.local.DefaultZoom, maxZoom: 20 });
         gl = L.mapboxGL({ container: 'map', attribution: Conf.local.attribution, accessToken: 'no-token', style: Conf.local.style }).addTo(map);
         map.zoomControl.setPosition("bottomright");
-        L.control.locate({ position: 'bottomright', strings: { title: "現在地を表示" }, locateOptions: { maxZoom: 16 } }).addTo(map);
+        L.control.locate({ position: 'bottomright', locateOptions: { maxZoom: 16 } }).addTo(map);
         L.control.scale({ imperial: false, maxWidth: 200 }).addTo(map);
 
         // translation
@@ -100,3 +84,157 @@ $(document).ready(function () {
         });
     });
 });
+
+var Takeaway = (function () {
+
+    var _status = "initialize";
+    const OUTSEETS = ["yes", "no"]; // outseetタグ用
+    const RegexPTN = [[/Mo/g, "月"], [/Tu/g, "火"], [/We/g, "水"], [/Th/g, "木"], [/Fr/g, "金"],
+    [/Sa/g, "土"], [/Su/g, "日"], [/;/g, "<br>"], [/PH/g, "祝日"], [/off/g, "休業"], [/24\/7/g, "24時間営業"]];
+
+    return {
+        status: () => { return _status }, // ステータスを返す
+        get: function (keys, callback) { // 情報（アイコンなど）を地図に追加
+            console.log("Takeaway: get start...");
+            _status = "get";
+            var targets = [];
+            if (keys == undefined || keys == "") {
+                for (let key in Conf.target) targets.push(key);
+            } else {
+                targets = keys;
+            };
+            if (map.getZoom() < Conf.local.MinZoomLevel) {
+                console.log("Takeaway: get end(Conf.local.MinZoomLevel).");
+                Takeaway.update();
+                callback();
+            } else {
+                OvPassCnt.get(targets).then(ovanswer => {
+                    PoiCont.set(ovanswer);
+                    Takeaway.update();
+                    console.log("Takeaway: get end.");
+                    callback();
+                }).catch((jqXHR, statusText, errorThrown) => {
+                    console.log("Takeaway: get Error. " + statusText);
+                    Takeaway.update();
+                    callback();
+                });
+            }
+        },
+
+        // Update Takeout Map Icon
+        update: targetkey => {
+            let ZoomLevel = map.getZoom();
+            if (targetkey == "" || typeof (targetkey) == "undefined") { // no targetkey then update all layer
+                for (let target in Conf.target) {
+                    Marker.all_delete(target);
+                    if (Conf.target[target].zoom <= ZoomLevel) Marker.set(target);
+                }
+            } else {
+                Marker.all_delete(targetkey);
+                if (Conf.target[targetkey].zoom <= ZoomLevel) Marker.set(targetkey);
+            }
+            _status = "";
+        },
+
+        view: osmid => {
+            _status = "view";
+            DataList.select(osmid);
+            let poi = PoiCont.get_osmid(osmid);
+            let tags = poi.geojson.properties;
+            osmid = osmid.replace('/', "-");
+            history.replaceState('', '', location.pathname + "?" + osmid + location.hash);
+
+            $("#osmid").html(tags.id);
+            $("#name").html(tags.name == null ? "-" : tags.name);
+            $("#category-icon").attr("src", tags.takeaway_icon);
+            $("#category").html(PoiCont.get_catname(tags));
+
+            let openhour;
+            if (tags["opening_hours:covid19"]) {
+                openhour = tags.opening_hours;
+            } else {
+                openhour = tags.opening_hours == null ? "-" : tags.opening_hours;
+            }
+            RegexPTN.forEach(val => { openhour = openhour.replace(val[0], val[1]) });
+            if (tags["opening_hours:covid19"]) { openhour += Conf.category.suffix_covid19 }
+            $("#opening_hours").html(openhour);
+
+            let delname;
+            if (tags["delivery:covid19"] != null) {
+                delname = Conf.category.delivery[tags["delivery:covid19"]] + Conf.category.suffix_covid19;
+            } else {
+                delname = tags.delivery == null ? "-" : Conf.category.delivery[tags.delivery];
+            }
+            $("#delivery").html(delname);
+
+            let outseet = OUTSEETS.indexOf(tags.outdoor_seating) < 0 ? "-" : tags.outdoor_seating;
+            $("#outdoor_seating").html(outseet);
+            if (outseet !== "-") $("#outdoor_seating").attr("glot-model", "outdoor_seating_" + outseet);
+
+            $("#phone").attr('href', tags.phone == null ? "" : "tel:" + tags.phone);
+            $("#phone_view").html(tags.phone == null ? "-" : tags.phone);
+
+            let website = tags["contact:website"] == null ? tags["website"] : tags["contact:website"];
+            let sns_instagram = tags["contact:instagram"] == null ? tags["instagram"] : tags["contact:instagram"];
+            let sns_twitter = tags["contact:twitter"] == null ? tags["twitter"] : tags["contact:twitter"];
+            let sns_facebook = tags["contact:facebook"] == null ? tags["facebook"] : tags["contact:facebook"];
+            if (website == null) {
+                $("#url").parent().hide();
+            } else {
+                $("#url").attr('href', website);
+                $("#url").parent().show();
+            };
+            if (sns_instagram == null) {
+                $("#sns_instagram").parent().hide();
+            } else {
+                $("#sns_instagram").attr('href', sns_instagram);
+                $("#sns_instagram").parent().show();
+            };
+            if (sns_twitter == null) {
+                $("#sns_twitter").parent().hide();
+            } else {
+                $("#sns_twitter").attr('href', sns_twitter);
+                $("#sns_twitter").parent().show();
+            };
+            if (sns_facebook == null) {
+                $("#sns_facebook").parent().hide();
+            } else {
+                $("#sns_facebook").attr('href', sns_facebook);
+                $("#sns_facebook").parent().show();
+            };
+
+            $("#description").html(tags.description == null ? "-" : tags.description);
+
+            glot.render();
+            $('#PoiView_Modal').modal({ backdrop: 'static', keyboard: true });
+
+            let hidden = e => {
+                _status = "";
+                history.replaceState('', '', location.pathname + location.hash);
+                $('#PoiView_Modal').modal('hide');
+            };
+            $('#PoiView_Modal').one('hidePrevented.bs.modal', hidden);
+            $('#PoiView_Modal').one('hidden.bs.modal', hidden);
+        },
+
+        openmap: osmid => {
+            let poi = Marker.get(osmid);
+            let zoom = map.getZoom();
+            let name = poi.tags.name == undefined ? "" : "search/" + poi.tags.name + "/";
+            window.open('https://www.google.com/maps/' + name + "@" + poi.ll.lat + ',' + poi.ll.lng + ',' + zoom + 'z');
+        },
+
+        sharemap: osmid => {
+            let _osmid = osmid.replace('/', "-");
+            let cpboard = location.origin + location.pathname + "?" + _osmid + location.hash;
+            $(document.body).append("<textarea id=\"copyTarget\" style=\"position:absolute; left:-9999px; top:0px;\">" + cpboard + "</textarea>");
+            let obj = document.getElementById("copyTarget");
+            let range = document.createRange();
+            range.selectNode(obj);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            $("#copyTarget").remove();
+        }
+    }
+})();

@@ -39,30 +39,53 @@
     ],
     "target": {
         "TAK": {
+            "ovpass": [
+                "node[\"takeaway\"]",
+                "way[\"takeaway\"]",
+                "node[\"takeaway:covid19\"]",
+                "way[\"takeaway:covid19\"]"
+            ],
             "list": true,
             "zoom": 15,
             "icon": "./image/bentou.svg"
         },
         "DEL": {
+            "ovpass": [
+                "node[\"delivery\"]",
+                "way[\"delivery\"]",
+                "node[\"delivery:covid19\"]",
+                "way[\"delivery:covid19\"]"
+            ],
             "list": true,
             "zoom": 15,
             "icon": "./image/delivery.svg"
         },
         "DEF": {
+            "ovpass": [
+                "node[\"shop\"=\"bakery\"]",
+                "way[\"shop\"=\"bakery\"]"
+            ],
+            "takeaway": true,
             "list": true,
             "zoom": 15,
             "icon": "./image/bentou.svg"
         },
         "VND": {
+            "ovpass": [
+                "node[\"amenity\"=\"vending_machine\"][\"vending\"=\"drinks\"]"
+            ],
             "list": false,
             "zoom": 17,
             "icon": "./image/vending.svg"
         },
         "LIB": {
+            "ovpass": [
+                "node[\"amenity\"=\"library\"]",
+                "way[\"amenity\"=\"library\"]"
+            ],
             "list": true,
             "zoom": 15,
             "icon": "./image/library.svg"
         }
     }
 }
-

@@ -136,6 +136,11 @@ span.icon {
     opacity: 0.7;
 }
 
+pre {
+    font: initial !important;
+    font-size: 100% !important;
+}
+
 .modal-backdrop {
     background-color: initial !important;
     opacity: 1 !important;
