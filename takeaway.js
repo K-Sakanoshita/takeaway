@@ -174,34 +174,18 @@ var Takeaway = (function () {
             $("#phone").attr('href', tags.phone == null ? "" : "tel:" + tags.phone);
             $("#phone_view").html(tags.phone == null ? "-" : tags.phone);
 
-            let website = tags["contact:website"] == null ? tags["website"] : tags["contact:website"];
-            let sns_instagram = tags["contact:instagram"] == null ? tags["instagram"] : tags["contact:instagram"];
-            let sns_twitter = tags["contact:twitter"] == null ? tags["twitter"] : tags["contact:twitter"];
-            let sns_facebook = tags["contact:facebook"] == null ? tags["facebook"] : tags["contact:facebook"];
-            if (website == null) {
-                $("#url").parent().hide();
-            } else {
-                $("#url").attr('href', website);
-                $("#url").parent().show();
-            };
-            if (sns_instagram == null) {
-                $("#sns_instagram").parent().hide();
-            } else {
-                $("#sns_instagram").attr('href', sns_instagram);
-                $("#sns_instagram").parent().show();
-            };
-            if (sns_twitter == null) {
-                $("#sns_twitter").parent().hide();
-            } else {
-                $("#sns_twitter").attr('href', sns_twitter);
-                $("#sns_twitter").parent().show();
-            };
-            if (sns_facebook == null) {
-                $("#sns_facebook").parent().hide();
-            } else {
-                $("#sns_facebook").attr('href', sns_facebook);
-                $("#sns_facebook").parent().show();
-            };
+            let fld = {};
+            fld.website = tags["contact:website"] == null ? tags["website"] : tags["contact:website"];
+            fld.sns_instagram = tags["contact:instagram"] == null ? tags["instagram"] : tags["contact:instagram"];
+            fld.sns_twitter = tags["contact:twitter"] == null ? tags["twitter"] : tags["contact:twitter"];
+            fld.sns_facebook = tags["contact:facebook"] == null ? tags["facebook"] : tags["contact:facebook"];
+            Object.keys(fld).forEach(function (key) {
+                if (fld[key] == null) {
+                    $("#" + key).hide();
+                } else {
+                    $("#" + key).show();
+                };
+            });
 
             $("#description").html(tags.description == null ? "-" : tags.description);
 
@@ -218,10 +202,29 @@ var Takeaway = (function () {
         },
 
         openmap: osmid => {
-            let poi = Marker.get(osmid);
-            let zoom = map.getZoom();
-            let name = poi.tags.name == undefined ? "" : "search/" + poi.tags.name + "/";
-            window.open('https://www.google.com/maps/' + name + "@" + poi.ll.lat + ',' + poi.ll.lng + ',' + zoom + 'z');
+            let poi = PoiCont.get_osmid(osmid);
+            let tags = poi.geojson.properties;
+            let ll = poi.latlng;
+            let name = tags.name == undefined ? "" : "search/" + tags.name + "/";
+            window.open('https://www.google.com/maps/' + name + "@" + ll.lat + ',' + ll.lng + ',' + map.getZoom() + 'z');
+        },
+
+        opensite: (osmid, key) => {
+            let tags = PoiCont.get_osmid(osmid).geojson.properties;
+            let address = tags["contact:" + key] == undefined ? tags[key] : tags["contact:" + key];
+            let http = address.substr(0, 4) == "http" ? true : false;
+            switch (key) {
+                case "website":
+                case "facebook":
+                    break;
+                case "twitter":
+                    if (!http) address = "https://twitter.com/" + address;
+                    break;
+                case "instagram":
+                    if (!http) address = "https://www.instagram.com/" + address;
+                    break;
+            }
+            if (address !== "") window.open(address);
         },
 
         sharemap: osmid => {

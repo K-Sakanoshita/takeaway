@@ -294,7 +294,7 @@ var OvPassCnt = (function () {
                     });
                     $.when.apply($, jqXHRs).done(function () {
                         let i = 0;
-                        targets.forEach(key => {
+                        targets.forEach(target => {
                             let arg = arguments[0][1] == undefined ? arguments[1] : arguments[i][1];
                             if (arg !== "success") {
                                 alert(OvGetError);
@@ -302,8 +302,30 @@ var OvPassCnt = (function () {
                             };
                             let osmxml = arguments[i++][0]
                             let geojson = osmtogeojson(osmxml, { flatProperties: true });
-                            geojson = geojson.features.filter(val => {      // 非対応の店舗はキャッシュに載せない
-                                if (PoiCont.get_catname(val.properties) !== "") return val;
+                            geojson = geojson.features.filter(node => {      // 非対応の店舗はキャッシュに載せない
+                                let tags = node.properties;
+                                if (PoiCont.get_catname(tags) !== "") {
+                                    let result = false;
+                                    switch (target) {
+                                        case "takeaway":
+                                            let take1 = tags.takeaway == undefined ? "" : tags.takeaway;                        // どれか一つにYesがあればOK
+                                            let take2 = tags["takeaway:covid19"] == undefined ? "" : tags["takeaway:covid19"];
+                                            if ([take1, take2].includes("yes")) result = true;
+                                            if ([take1, take2].includes("only")) result = true;
+                                            break;
+                                        case "delivery":
+                                            let deli1 = tags.delivery == undefined ? "" : tags.delivery;
+                                            let deli2 = tags["delivery:covid19"] == undefined ? "" : tags["delivery:covid19"];
+                                            if ([deli1, deli2].includes("yes")) result = true;
+                                            if ([deli1, deli2].includes("only")) result = true;
+                                            break;
+                                        case "takeaway_shop":
+                                        default:
+                                            result = true
+                                            break;
+                                    };
+                                    if (result) return node;
+                                 };
                             });
                             geojson.forEach(function (val1) {
                                 delete val1.id;                             // delete Unnecessary osmid
@@ -315,9 +337,9 @@ var OvPassCnt = (function () {
                                     cidx = Cache.geojson.length - 1;
                                 };
                                 if (Cache.targets[cidx] == undefined) {  // 
-                                    Cache.targets[cidx] = [key];
-                                } else if (Cache.targets[cidx].indexOf(key) === -1) {
-                                    Cache.targets[cidx].push(key);
+                                    Cache.targets[cidx] = [target];
+                                } else if (Cache.targets[cidx].indexOf(target) === -1) {
+                                    Cache.targets[cidx].push(target);
                                 };
                             });
                         });

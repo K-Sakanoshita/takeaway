@@ -54,14 +54,24 @@
                     </div>
                     <div class="row mb-1 align-items-center">
                         <div class="col-2 p-1">公式</div>
-                        <button class="btn btn-secondary col-1 p-0 mr-2"><a id="url" class="icon" target="_blank"><i class="fas fa-home"></i></a></button>
-                        <button class="btn btn-warning col-1 p-0 mr-2"><a id="sns_instagram" class="icon" target="_blank"><i class="fab fa-instagram"></i></a></button>
-                        <button class="btn btn-info col-1 p-0 mr-2"><a id="sns_twitter" class="icon" target="_blank"><i class="fab fa-twitter"></i></a></button>
-                        <button class="btn btn-primary col-1 p-0 mr-2"><a id="sns_facebook" class="icon" target="_blank"><i class="fab fa-facebook-f"></i></a></button>
+                        <button class="btn btn-secondary col-1 p-0 mr-2" id="website" onclick="Takeaway.opensite($('#osmid').html(),'website')">
+                            <i class="fas fa-home"></i>
+                        </button>
+                        <button class="btn btn-warning col-1 p-0 mr-2" id="sns_instagram" onclick="Takeaway.opensite($('#osmid').html(),'instagram')">
+                            <i class="fab fa-instagram"></i>
+                        </button>
+                        <button class="btn btn-info col-1 p-0 mr-2" id="sns_twitter" onclick="Takeaway.opensite($('#osmid').html(),'twitter')">
+                            <i class="fab fa-twitter"></i>
+                        </button>
+                        <button class="btn btn-primary col-1 p-0 mr-2" id="sns_facebook" onclick="Takeaway.opensite($('#osmid').html(),'facebook')">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
                     </div>
                     <div class="row mb-1 align-items-center">
                         <div class="col-2 p-1">備考</div>
-                        <div class="col-10 p-1"><pre id="description"></pre></div>
+                        <div class="col-10 p-1">
+                            <pre id="description"></pre>
+                        </div>
                     </div>
                 </div>
             </div>
