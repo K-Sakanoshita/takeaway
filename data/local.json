@@ -63,7 +63,9 @@
         "takeaway_shop": {
             "ovpass": [
                 "node[\"shop\"=\"bakery\"]",
-                "way[\"shop\"=\"bakery\"]"
+                "way[\"shop\"=\"bakery\"]",
+                "node[\"shop\"=\"deli\"]",
+                "way[\"shop\"=\"deli\"]"
             ],
             "list": true,
             "zoom": 15,
