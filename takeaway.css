@@ -141,6 +141,12 @@ pre {
     font-size: 100% !important;
 }
 
+.updated::after {
+    content: " 【更新】";
+    color: red;
+    font-weight: bold;
+}
+
 .modal-backdrop {
     background-color: initial !important;
     opacity: 1 !important;
