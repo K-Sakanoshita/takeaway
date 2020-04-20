@@ -36,8 +36,8 @@
         "en": "no"
     },
     "modal_title": {
-        "ja": "テイクアウト詳細情報",
-        "en": "Detailed information"
+        "ja": "詳細情報(更新:",
+        "en": "Detailed"
     },
     "modal_close": {
         "ja": "閉じる",

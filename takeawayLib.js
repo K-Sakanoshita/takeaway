@@ -11,8 +11,6 @@ var PoiCont = (function () {
         set: function (pois) {      // pois: {geojson: [],targets: []}
             PoiData = { geojson: pois.geojson, targets: pois.targets };
             PoiData.geojson.forEach(function (node, node_idx) {
-                let tags = node.properties;
-          //      $.extend(tags, { "timestamp": new Date(node.properties.meta.timestamp) });
                 if (node.geometry.type == "Polygon") {
                     latlngs[node.id] = { "lat": node.geometry.coordinates[0][0][1], "lng": node.geometry.coordinates[0][0][0] };
                 } else {
@@ -201,7 +199,7 @@ var DataList = (function () {
             let result = PoiCont.list(targets);
             table = $('#tableid').DataTable({
                 "autoWidth": true,
-                "columns": [{ title: "名前", data: "name", "width": "40%" }, { title: "種類", data: "category", "width": "30%" }, { title: "距離", data: "between", "width": "20%" },],
+                "columns": [{ title: "名前", data: "name", "width": "45%" }, { title: "種類", data: "category", "width": "30%" }, { title: "距離", data: "between", "width": "15%" },],
                 "columnDefs": [{ targets: 2, render: $.fn.dataTable.render.number(',', '.', 0, '', 'm') }],
                 "data": result,
                 "processing": true,
@@ -290,7 +288,7 @@ var OvPassCnt = (function () {
                     targets.forEach(key => {
                         let query = "";
                         for (let ovpass in Conf.target[key].ovpass) { query += Conf.target[key].ovpass[ovpass] + maparea; }
-                        let url = OvServer + '?data=[out:json][timeout:30];(' + query + ');out meta qt;';
+                        let url = OvServer + '?data=[out:json][timeout:30];(' + query + ');(._;>;);out meta qt;';
                         console.log("GET: " + url);
                         jqXHRs.push($.get(url, () => { DisplayStatus.progress(Math.ceil(((++Progress + 1) * 100) / LayerCounts)) }));
                     });

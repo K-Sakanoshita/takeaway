@@ -141,10 +141,12 @@ var Takeaway = (function () {
             DataList.select(osmid);
             let poi = PoiCont.get_osmid(osmid);
             let tags = poi.geojson.properties;
+            let date = moment(tags.timestamp);
             osmid = osmid.replace('/', "-");
             history.replaceState('', '', location.pathname + "?" + osmid + location.hash);
 
             $("#osmid").html(tags.id);
+            $("#timestamp").html(date.format("YYYY/MM/DD hh:mm"));
             $("#name").html(tags.name == null ? "-" : tags.name);
             $("#category-icon").attr("src", tags.takeaway_icon);
             $("#category").html(PoiCont.get_catname(tags));
@@ -228,6 +230,7 @@ var Takeaway = (function () {
             switch (key) {
                 case "website":
                 case "facebook":
+                    if (!http) address = "https://" + address;
                     break;
                 case "twitter":
                     if (!http) address = "https://twitter.com/" + address;
