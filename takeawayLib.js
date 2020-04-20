@@ -12,12 +12,13 @@ var PoiCont = (function () {
             PoiData = { geojson: pois.geojson, targets: pois.targets };
             PoiData.geojson.forEach(function (node, node_idx) {
                 let tags = node.properties;
+          //      $.extend(tags, { "timestamp": new Date(node.properties.meta.timestamp) });
                 if (node.geometry.type == "Polygon") {
-                    latlngs[tags.id] = { "lat": node.geometry.coordinates[0][0][1], "lng": node.geometry.coordinates[0][0][0] };
+                    latlngs[node.id] = { "lat": node.geometry.coordinates[0][0][1], "lng": node.geometry.coordinates[0][0][0] };
                 } else {
-                    latlngs[tags.id] = { "lat": node.geometry.coordinates[1], "lng": node.geometry.coordinates[0] };
+                    latlngs[node.id] = { "lat": node.geometry.coordinates[1], "lng": node.geometry.coordinates[0] };
                 }
-                geoidx[tags.id] = node_idx;
+                geoidx[node.id] = node_idx;
             });
         },
         get_target: function (targets) {        // 指定したtargetのgeojsonと緯度経度を返す
@@ -42,7 +43,8 @@ var PoiCont = (function () {
             let datas = [];
             pois.geojson.forEach(node => {
                 let tags = node.properties;
-                let name = tags.name == undefined ? "-" : tags.name;
+                let _7DaysAgo = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 7);                //更新一週間以内のデータには印を付加する
+                let name = tags.name == undefined ? "-" : tags.name + (_7DaysAgo < new Date(tags.timestamp) ? "<span class=\"updated\"></span>" : '');
                 let category = PoiCont.get_catname(tags);
                 let between = Math.round(PoiCont.calc_between(latlngs[tags.id], map.getCenter()));
                 datas.push({ "osmid": tags.id, "name": name, "category": category, "between": between });
@@ -288,7 +290,7 @@ var OvPassCnt = (function () {
                     targets.forEach(key => {
                         let query = "";
                         for (let ovpass in Conf.target[key].ovpass) { query += Conf.target[key].ovpass[ovpass] + maparea; }
-                        let url = OvServer + '?data=[out:json][timeout:30];(' + query + ');out body;>;out skel qt;';
+                        let url = OvServer + '?data=[out:json][timeout:30];(' + query + ');out meta qt;';
                         console.log("GET: " + url);
                         jqXHRs.push($.get(url, () => { DisplayStatus.progress(Math.ceil(((++Progress + 1) * 100) / LayerCounts)) }));
                     });
@@ -328,7 +330,6 @@ var OvPassCnt = (function () {
                                  };
                             });
                             geojson.forEach(function (val1) {
-                                delete val1.id;                             // delete Unnecessary osmid
                                 let cidx = Cache.geojson.findIndex(function (val2) {
                                     if (val2.properties.id == val1.properties.id) return true;
                                 });
