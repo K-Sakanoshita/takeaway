@@ -166,6 +166,19 @@ var Takeaway = (function () {
                 delname = tags.delivery == null ? "-" : Conf.category.delivery[tags.delivery];
             }
             $("#delivery").html(delname);
+            
+            let cuisine;
+            if (tags.cuisine != null) {
+              console.log(tags.cuisine);
+              cuisine = tags.cuisine.split(";").map(
+                  (key) =>{
+                      return Conf.category.cuisine[tags.cuisine] || key;
+                  }
+              );
+            } else {
+              cuisine = "-";
+            }
+            $("#cuisine").html(cuisine);
 
             let outseet = OUTSEETS.indexOf(tags.outdoor_seating) < 0 ? "-" : tags.outdoor_seating;
             $("#outdoor_seating").html(outseet);
