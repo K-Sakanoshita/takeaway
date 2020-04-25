@@ -35,7 +35,7 @@
 * data/glot.json: 各言語翻訳ファイル。titleとownerを自サイト版へ
 * data/local.json: "SplashImage"はWebサイトを開いた直後に表示する画像ファイルを指定
 * data/local.json: "DefaultCenter"はWebサイトを開いた時に表示する緯度経度を指定
-* data/local.json: "MinZoomLevel"はWebサイトを開いた時のズームレベルを指定(1～20)
+* data/local.json: "IconViewZoom"はWebサイトを開いた時のズームレベルを指定(1～20)
 * image/thumbnail.png: OGPで指定するサムネイル画像(og:imageで指定したファイル)
 * image/splash.png: スプラッシュスクリーン画像を指定
 

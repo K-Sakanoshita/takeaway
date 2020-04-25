@@ -28,11 +28,19 @@
         "en": "(for smartphone)simple editing tool"
     },
     "outdoor_seating_yes": {
-        "ja": "テラスあり",
-        "en": "yes"
+        "ja": "(テラスあり)",
+        "en": "(outdoor seats)"
     },
     "outdoor_seating_no": {
-        "ja": "テラスなし",
+        "ja": "(テラスなし)",
+        "en": "(no outdoor seats)"
+    },
+    "takeaway_yes": {
+        "ja": "あり",
+        "en": "no"
+    },
+    "takeaway_no": {
+        "ja": "なし",
         "en": "no"
     },
     "modal_title": {

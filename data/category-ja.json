@@ -1,9 +1,5 @@
 {
     "category": {
-        "filter_targets": [
-            "amenity",
-            "shop"
-        ],
         "amenity": {
             "library": "図書館",
             "bar": "バー/酒場",
@@ -27,7 +23,7 @@
             "coffee": "コーヒー店",
             "confectionery": "お菓子店(甘味)",
             "convenience": "コンビニエンスストア",
-            "deli": "惣菜販売店",
+            "deli": "お弁当/惣菜屋",
             "dairy": "乳製品店",
             "farm": "農場直売店",
             "frozen_food": "冷凍食品専門店",
@@ -110,10 +106,10 @@
             "yakitori": "焼鳥"
         },
         "delivery": {
-            "yes": "配達あり",
-            "no": "配達なし",
-            "only": "配達のみ"
+            "yes": "宅配あり",
+            "no": "宅配なし",
+            "only": "宅配のみ"
         },
-        "suffix_covid19": "(臨時)"
+        "suffix_covid19": "(暫定)"
     }
 }

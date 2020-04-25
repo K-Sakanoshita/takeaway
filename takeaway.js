@@ -36,29 +36,30 @@ $(document).ready(function () {
 
         // initialize leaflet
         console.log("initialize leaflet.");
-        map = L.map('mapid', { center: Conf.local.DefaultCenter, zoom: Conf.local.DefaultZoom, maxZoom: 20 });
+        map = L.map('mapid', { center: Conf.local.DefaultCenter, zoom: Conf.local.DefaultZoom, maxZoom: 21 });
         gl = L.mapboxGL({ container: 'map', attribution: Conf.local.attribution, accessToken: 'no-token', style: Conf.local.style }).addTo(map);
         map.zoomControl.setPosition("bottomright");
         L.control.locate({ position: 'bottomright', locateOptions: { maxZoom: 16 } }).addTo(map);
         L.control.scale({ imperial: false, maxWidth: 200 }).addTo(map);
 
         // translation
+        console.log("initialize translation.");
         glot = new Glottologist();
         glot.import("./data/glot.json").then(() => { glot.render() });
 
         // 引数を元にマップの初期状態を設定
         if (location.hash == "") {      // 緯度経度が無い場合
             hash = new L.Hash(map);
-            Marker.event_move();
+            Takeaway.event_move();
         } else {
             hash = new L.Hash(map);
         };
 
         // イベント登録
         $(window).resize(DisplayStatus.window_resize);      // 画面サイズに合わせたコンテンツ表示切り替え
-        map.on('moveend', Marker.event_move);               // マップ移動時の処理
+        map.on('moveend', Takeaway.event_move);               // マップ移動時の処理
         map.on('zoomend', function (e) {                    // ズーム時のメッセージ表示
-            let msg = map.getZoom() < Conf.local.MinZoomLevel ? MoreZoomMsg : "";
+            let msg = map.getZoom() < Conf.local.IconViewZoom ? MoreZoomMsg : "";
             DisplayStatus.morezoom(msg);
         });
 
@@ -88,7 +89,7 @@ $(document).ready(function () {
 var Takeaway = (function () {
 
     var _status = "initialize";
-    const OUTSEETS = ["yes", "no"]; // outseetタグ用
+    const YESNO = ["yes", "no"]; // outseetタグ用
     const RegexPTN = [[/Mo/g, "月"], [/Tu/g, "火"], [/We/g, "水"], [/Th/g, "木"], [/Fr/g, "金"],
     [/Sa/g, "土"], [/Su/g, "日"], [/;/g, "<br>"], [/PH/g, "祝日"], [/off/g, "休業"], [/24\/7/g, "24時間営業"]];
 
@@ -103,8 +104,8 @@ var Takeaway = (function () {
             } else {
                 targets = keys;
             };
-            if (map.getZoom() < Conf.local.MinZoomLevel) {
-                console.log("Takeaway: get end(Conf.local.MinZoomLevel).");
+            if (map.getZoom() < Conf.local.IconViewZoom) {
+                console.log("Takeaway: get end(Conf.local.IconViewZoom).");
                 Takeaway.update();
                 callback();
             } else {
@@ -152,13 +153,13 @@ var Takeaway = (function () {
             $("#category").html(PoiCont.get_catname(tags));
 
             let openhour;
-            if (tags["opening_hours:covid19"]) {
-                openhour = tags.opening_hours;
+            if (tags["opening_hours:covid19"] != null) {
+                openhour = tags["opening_hours:covid19"];
             } else {
                 openhour = tags.opening_hours == null ? "-" : tags.opening_hours;
-            }
+            };
             RegexPTN.forEach(val => { openhour = openhour.replace(val[0], val[1]) });
-            if (tags["opening_hours:covid19"]) { openhour += Conf.category.suffix_covid19 }
+            if (tags["opening_hours:covid19"] != null) { openhour += Conf.category.suffix_covid19 }
             $("#opening_hours").html(openhour);
 
             let delname;
@@ -168,22 +169,33 @@ var Takeaway = (function () {
                 delname = tags.delivery == null ? "-" : Conf.category.delivery[tags.delivery];
             }
             $("#delivery").html(delname);
-            
+
             let cuisine;
             if (tags.cuisine != null) {
-              cuisine = tags.cuisine.split(";").map(
-                  (key) =>{
-                      return Conf.category.cuisine[key] || key;
-                  }
-              ).join(", ");
+                cuisine = tags.cuisine.split(";").map(
+                    (key) => {
+                        return Conf.category.cuisine[key] || key;
+                    }
+                ).join(", ");
             } else {
-              cuisine = "-";
+                cuisine = "-";
             }
             $("#cuisine").html(cuisine);
 
-            let outseet = OUTSEETS.indexOf(tags.outdoor_seating) < 0 ? "-" : tags.outdoor_seating;
-            $("#outdoor_seating").html(outseet);
-            if (outseet !== "-") $("#outdoor_seating").attr("glot-model", "outdoor_seating_" + outseet);
+            let outseet = YESNO.indexOf(tags.outdoor_seating) < 0 ? "" : tags.outdoor_seating;
+            if (outseet !== "") {
+                $("#outdoor_seating").attr("glot-model", "outdoor_seating_" + outseet);
+            } else {
+                $("#outdoor_seating").removeAttr("glot-model");
+            };
+
+            let takeaway = YESNO.indexOf(tags.takeaway) < 0 ? "" : tags.takeaway;
+            if (takeaway !== "") {
+                $("#takeaway").attr("glot-model", "takeaway_" + takeaway);
+            } else {
+                $("#takeaway").removeAttr("glot-model");
+                $("#takeaway").html("-");
+            };
 
             $("#phone").attr('href', tags.phone == null ? "" : "tel:" + tags.phone);
             $("#phone_view").html(tags.phone == null ? "-" : tags.phone);
@@ -214,7 +226,35 @@ var Takeaway = (function () {
             $('#PoiView_Modal').one('hidePrevented.bs.modal', hidden);
             $('#PoiView_Modal').one('hidden.bs.modal', hidden);
         },
+        event_move: (e) => {                // map.moveend発生時のイベント
+            console.log("moveend: event start.");
+            LL.NW = map.getBounds().getNorthWest();
+            LL.SE = map.getBounds().getSouthEast();
+            let targets = Object.keys(Conf.target).filter(key => { return Conf.target[key].list });
 
+            if (LL.busy) clearTimeout(LL.id);    // no break and cancel old timer.
+
+            LL.busy = true;
+            if (Takeaway.status() == "initialize") {    // 初期イベント(移動)
+                Takeaway.get("", () => {
+                    DataList.view(targets);
+                    DisplayStatus.splash(false);
+                    if (location.search !== "") {    // 引数がある場合
+                        let osmid = location.search.replace(/[?&]fbclid.*/, '');
+                        osmid = osmid.replace('-', '/');
+                        osmid = osmid.replace('=', '');
+                        let tags = PoiCont.get_osmid(osmid.slice(1)).geojson.properties;
+                        if (tags !== undefined) Takeaway.view(tags.id);
+                    }
+                    LL.busy = false;
+                });
+            } else {
+                LL.id = setTimeout(() => {
+                    Takeaway.get("", () => { DataList.view(targets) });
+                    LL.busy = false;
+                }, 1000);
+            }
+        },
         openmap: osmid => {
             let poi = PoiCont.get_osmid(osmid);
             let tags = poi.geojson.properties;
