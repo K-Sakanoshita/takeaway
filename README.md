@@ -1,4 +1,4 @@
-# みんなでテイクアウトMAP
+# みんなでテイクアウトMAP [尼崎版](https://codeforamagasaki.github.io/takeaway/)
 
 ## 概要と目的
 * OverPass APIでOpenStreetMapのテイクアウト/デリバリー施設を抽出して地図に表示するツール
@@ -28,6 +28,17 @@
 7. 手順"1."でforkさせたリポジトリ内にある「data/local.json」ファイルを開く
 8. 「"style":」から始める行を探し、手順"6."でコピーした内容に置き換えて保存する
 9. 手順"3."のGitHub Pagesを再読み込みし、自分が設定した地図が表示されると構築完了
+
+### 開発環境
+#### ブランチ
+* [master](https://github.com/codeforamagasaki/takeaway/tree/master/): upstreamと同期用。`git fetch upstream;git merge upstream/master`で受け取るだけ、変更しない
+* [develop](https://github.com/codeforamagasaki/takeaway/tree/develop): 開発用ブランチ。C4AMA独自の変更はここへ
+* [gh-pages](https://github.com/codeforamagasaki/takeaway/tree/gh-pages): [Github Pages](https://codeforamagasaki.github.io/takeaway/)公開ブランチ。公開出来る様になったらここへプッシュ
+* 機能名とか改修名とか: プルリクエストするコミットをcherry-pickしてまとめる用ブランチ
+#### ローカル環境
+クロンしたリポジトリルートでローカルサーバ起動<br>
+`python3 -m http.server`や`php -S localhost:8000`で<br>
+[http://localhost:8000](http://localhost:8000/)で動作確認できる。
 
 ## カスタマイズ方法
 ### 主なカスタマイズ対象ファイルは以下のとおり
