@@ -1,4 +1,4 @@
-# みんなでテイクアウトMAP [尼崎版](https://codeforamagasaki.github.io/takeaway/)
+# みんなでテイクアウトMAP <開発版>
 
 ## 概要と目的
 * OverPass APIでOpenStreetMapのテイクアウト/デリバリー施設を抽出して地図に表示するツール
