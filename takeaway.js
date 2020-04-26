@@ -293,6 +293,10 @@ var Takeaway = (function () {
             window.getSelection().addRange(range);
             document.execCommand('copy');
             $("#copyTarget").remove();
-        }
+            $('#copied').addClass( 'copied');
+        },
+        sharemapEnd: () => {
+            $('#copied').removeClass( 'copied');
+        },
     }
 })();
