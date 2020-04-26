@@ -33,8 +33,8 @@
                     <div class="row mb-1 align-items-center">
                         <div class="col-2 p-1">種類</div>
                         <div class="col-9 p-1"><img src="" class="icon" id="category-icon" /><span id="category"></span><span id="outdoor_seating"></span></div>
-                        <button class="btn btn-secondary col-1 p-0" onclick="Takeaway.sharemap($('#osmid').html())">
-                            <i class="fas fa-share-alt"></i>
+                        <button type="button" class="btn btn-secondary col-1 p-0" onclick="Takeaway.sharemap($('#osmid').html())" title="このURLをコピーする" onanimationend="Takeaway.sharemapEnd()">
+                            <i class="fas fa-clone"></i><span id="copied">URLをクリップボードへコピーしました</span>
                         </button>
                     </div>
                     <div class="row mb-1 align-items-center">
