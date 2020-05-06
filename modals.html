@@ -13,50 +13,33 @@
 
 <div id="PoiView_Modal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document" data-keyboard="false">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><span class="modal-title" glot-model="modal_title"></span><span id="timestamp"></span>)</h2>
-                <button class="close ml-2" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
+        <div class="modal-content shadow">
             <span id="osmid" class="d-none"></span>
             <div class="modal-body">
                 <div class="container-fluid">
                     <div class="row mb-1 align-items-center">
-                        <div class="col-2 p-1">名前</div>
+                        <div class="col-2 p-1" glot-model="modal_name"></div>
                         <div class="col-9 p-1"><span id="name" class="font-weight-bold"></span></div>
                         <button class="btn btn-success col-1 p-0" onclick="Takeaway.openmap($('#osmid').html())">
                             <i class="fas fa-map-marked-alt"></i>
                         </button>
                     </div>
                     <div class="row mb-1 align-items-center">
-                        <div class="col-2 p-1">種類</div>
-                        <div class="col-9 p-1"><img src="" class="icon" id="category-icon" /><span id="category"></span><span id="outdoor_seating"></span></div>
-                        <button type="button" class="btn btn-secondary col-1 p-0" onclick="Takeaway.sharemap($('#osmid').html())" title="このURLをコピーする" onanimationend="Takeaway.sharemapEnd()">
-                            <i class="fas fa-clone"></i><span id="copied">URLをクリップボードへコピーしました</span>
+                        <div class="col-2 p-1 text-break" glot-model="modal_category"></div>
+                        <div class="col-9 p-1">
+                            <img src="" class="icon mr-1" id="category-icon" /><span id="category"></span><span id="outdoor_seating"></span>
+                            <span id="copied" class="text-right text-nowrap" glot-model="modal_copied"></span>
+                        </div>
+                        <button type="button" class="btn btn-warning col-1 p-0" onclick="Takeaway.sharemap()">
+                            <i class="fas fa-clone"></i><span id="copied" class="text-right text-nowrap" glot-model="modal_copied"></span>
                         </button>
                     </div>
                     <div class="row mb-1 align-items-center">
-                        <div class="col-2 p-1">料理</div>
+                        <div class="col-2 p-1 text-break" glot-model="modal_cuisine"></div>
                         <div class="col-10 p-1"><span id="cuisine"></span></div>
                     </div>
                     <div class="row mb-1 align-items-center">
-                        <div class="col-2 p-1">時間</div>
-                        <div class="col-10 p-1"><span id="opening_hours"></span></div>
-                    </div>
-                    <div class="row mb-1 align-items-center">
-                        <div class="col-2 p-1">宅配</div>
-                        <div class="col-4 p-1"><span id="delivery"></span></div>
-                        <div class="col-2 p-1">持ち帰り</div>
-                        <div class="col-4 p-1"><span id="takeaway"></span></div>
-                    </div>
-                    <div class="row mb-1 align-items-center">
-                        <div class="col-2 p-1">電話</div>
-                        <div class="col-10 p-1"><a id="phone"><span id="phone_view"></span></a></div>
-                    </div>
-                    <div class="row mb-1 align-items-center">
-                        <div class="col-2 p-1">公式</div>
+                        <div class="col-2 p-1"></div>
                         <button class="btn btn-secondary col-1 p-0 mr-2" id="website" onclick="Takeaway.opensite($('#osmid').html(),'website')">
                             <i class="fas fa-home"></i>
                         </button>
@@ -69,19 +52,38 @@
                         <button class="btn btn-primary col-1 p-0 mr-2" id="sns_facebook" onclick="Takeaway.opensite($('#osmid').html(),'facebook')">
                             <i class="fab fa-facebook-f"></i>
                         </button>
+                        <div class="col-6 p-1"><a id="phone"><span id="phone_view"></span></a></div>
                     </div>
                     <div class="row mb-1 align-items-center">
-                        <div class="col-2 p-1">備考</div>
+                        <div class="col-2 p-1 text-break" glot-model="modal_opening_hours"></div>
+                        <div class="col-10 p-1"><span id="opening_hours"></span></div>
+                    </div>
+                    <div class="row mb-1 align-items-center">
+                        <div class="col-2 p-1 text-break" glot-model="modal_delivery"></div>
+                        <div class="col-3 p-1"><span id="delivery"></span></div>
+                        <div class="col-3 p-1 text-break" glot-model="modal_takeaway"></div>
+                        <div class="col-4 p-1"><span id="takeaway"></span></div>
+                    </div>
+                    <div class="row mb-1 align-items-center">
+                        <div class="col-2 p-1 text-break" glot-model="modal_description"></div>
                         <div class="col-10 p-1">
-                            <pre id="description"></pre>
+                            <pre id="description" class="pb-2 mb-0"></pre>
+                            <span glot-model="modal_notice"></span>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary mx-auto" data-dismiss="modal">
-                    <i class="far fa-window-close"></i><span class="ml-2" glot-model="modal_close"></span>
-                </button>
+                <div class="container-fluid">
+                    <div class="row mb-1 align-items-center">
+                        <div class="col-8 p-1"><span glot-model="modal_update"></span><span id="timestamp"></span></div>
+                        <div class="col-4 p-1">
+                            <button class="btn btn-primary float-right" data-dismiss="modal">
+                                <i class="far fa-window-close"></i><span class="ml-2" glot-model="modal_close"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

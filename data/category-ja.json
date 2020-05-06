@@ -1,7 +1,7 @@
 {
     "category": {
         "amenity": {
-            "library": "図書館",
+            "library": "図書館（目印の施設）",
             "bar": "バー/酒場",
             "cafe": "カフェ/喫茶店",
             "drinking_water": "給水所/水栓",
@@ -105,11 +105,42 @@
             "yakiniku": "焼肉",
             "yakitori": "焼鳥"
         },
+        "takeaway": {
+            "yes": "あり",
+            "no": "なし",
+            "only": "専門"
+        },
         "delivery": {
-            "yes": "宅配あり",
-            "no": "宅配なし",
-            "only": "宅配のみ"
+            "yes": "あり",
+            "no": "なし",
+            "only": "専門"
+        },
+        "diet": {
+            "diet:pescetarian": "ペクスタリアン",
+            "diet:vegetarian": "ベジタリアン",
+            "diet:lacto_vegetarian": "ラクト・ベジタリアン",
+            "diet:ovo_vegetarian": "オボ・ベジタリアン",
+            "diet:vegan": "ヴィーガン",
+            "diet:fruitarian": "フルータリアン",
+            "diet:raw": "未料理/未加工",
+            "diet:gluten_free": "グルテンフリー",
+            "diet:dairy_free": "デイリーフリー",
+            "diet:lactose_free": "ラクトースフリー",
+            "diet:halal": "ハラル",
+            "diet:kosher": "コーシェル"
         },
         "suffix_covid19": "(暫定)"
+    },
+    "opening_hours": {
+        "Mo": "月",
+        "Tu": "火",
+        "We": "水",
+        "Th": "木",
+        "Fr": "金",
+        "Sa": "土",
+        "Su": "日",
+        "PH": "祝日",
+        "off": "休業",
+        "24\/7": "24時間営業"
     }
 }

@@ -27,25 +27,57 @@
         "ja": "(スマホ用)簡易編集ツール",
         "en": "(for smartphone)simple editing tool"
     },
+    "list_update": {
+        "ja": " (更新)",
+        "en": " (update)"
+    },
+    "modal_name": {
+        "ja": "名前",
+        "en": "name"
+    },
+    "modal_cuisine": {
+        "ja": "料理",
+        "en": "cuisine"
+    },
+    "modal_category": {
+        "ja": "種類",
+        "en": "category"
+    },
+    "modal_opening_hours": {
+        "ja": "時間",
+        "en": "open"
+    },
+    "modal_delivery": {
+        "ja": "宅配",
+        "en": "delivery"
+    },
+    "modal_takeaway": {
+        "ja": "持ち帰り",
+        "en": "take out"
+    },
+    "modal_description": {
+        "ja": "備考",
+        "en": "description"
+    },
     "outdoor_seating_yes": {
-        "ja": "(テラスあり)",
+        "ja": "(テラス席あり)",
         "en": "(outdoor seats)"
     },
     "outdoor_seating_no": {
-        "ja": "(テラスなし)",
+        "ja": "(テラス席なし)",
         "en": "(no outdoor seats)"
     },
-    "takeaway_yes": {
-        "ja": "あり",
-        "en": "no"
+    "modal_copied": {
+        "ja": "URLをクリップボードへコピーしました",
+        "en": "Copied URL to clipboard"
     },
-    "takeaway_no": {
-        "ja": "なし",
-        "en": "no"
+    "modal_notice": {
+        "ja": "※図書館は目印（ランドマーク）として表示",
+        "en": "* The library is displayed as a landmark"
     },
-    "modal_title": {
-        "ja": "詳細情報(更新:",
-        "en": "Detailed"
+    "modal_update": {
+        "ja": "更新日時: ",
+        "en": "update: "
     },
     "modal_close": {
         "ja": "閉じる",

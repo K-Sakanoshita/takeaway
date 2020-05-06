@@ -2,8 +2,8 @@
     "local": {
         "SplashImage": "image/splash.png",
         "DefaultCenter": [
-            34.85084,
-            135.62033
+            34.7075,
+            135.5018
         ],
         "DefaultZoom": 15,
         "IconViewZoom": 15,
@@ -29,7 +29,7 @@
         },
         {
             "glot-model": "openstreetmap",
-            "linkto": "https://www.openstreetmap.org/",
+            "linkto": "https://www.openstreetmap.org/about",
             "divider": false
         },
         {

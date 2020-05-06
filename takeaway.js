@@ -10,7 +10,8 @@ const MoreZoomMsg = "ズームすると店舗が表示されます。";
 const OvGetError = "サーバーからのデータ取得に失敗しました。やり直してください。";
 // const OvServer = 'https://overpass.kumi.systems/api/interpreter' // or 'https://overpass-api.de/api/interpreter' or 'https://overpass.nchc.org.tw/api/interpreter'
 const OvServer = 'https://overpass.nchc.org.tw/api/interpreter'
-const FILES = ['modals.html', 'data/category-ja.json', 'data/datatables-ja.json', 'data/local.json'];
+const LANG = (window.navigator.userLanguage || window.navigator.language || window.navigator.browserLanguage).substr(0, 2) == "ja" ? "ja" : "en";
+const FILES = ['modals.html', 'data/category-' + LANG + '.json', 'data/datatables-' + LANG + '.json', 'data/local.json'];
 
 $(document).ready(function () {
 
@@ -90,8 +91,6 @@ var Takeaway = (function () {
 
     var _status = "initialize";
     const YESNO = ["yes", "no"]; // outseetタグ用
-    const RegexPTN = [[/Mo/g, "月"], [/Tu/g, "火"], [/We/g, "水"], [/Th/g, "木"], [/Fr/g, "金"],
-    [/Sa/g, "土"], [/Su/g, "日"], [/;/g, "<br>"], [/PH/g, "祝日"], [/off/g, "休業"], [/24\/7/g, "24時間営業"]];
 
     return {
         status: () => { return _status }, // ステータスを返す
@@ -143,7 +142,7 @@ var Takeaway = (function () {
             let poi = PoiCont.get_osmid(osmid);
             let tags = poi.geojson.properties;
             let date = moment(tags.timestamp);
-            osmid = osmid.replace('/', "-");
+            osmid = osmid.replace('/', "=");
             history.replaceState('', '', location.pathname + "?" + osmid + location.hash);
 
             $("#osmid").html(tags.id);
@@ -152,35 +151,39 @@ var Takeaway = (function () {
             $("#category-icon").attr("src", tags.takeaway_icon);
             $("#category").html(PoiCont.get_catname(tags));
 
+            // opening_hours
             let openhour;
             if (tags["opening_hours:covid19"] != null) {
                 openhour = tags["opening_hours:covid19"];
             } else {
                 openhour = tags.opening_hours == null ? "-" : tags.opening_hours;
             };
+            let RegexPTN = [[/\|\|/g, "<br>"], [/;/g, "<br>"]];
+            Object.keys(Conf.opening_hours).forEach(key => {
+                RegexPTN.push([new RegExp(key, "g"),Conf.opening_hours[key]]);
+            });
             RegexPTN.forEach(val => { openhour = openhour.replace(val[0], val[1]) });
             if (tags["opening_hours:covid19"] != null) { openhour += Conf.category.suffix_covid19 }
             $("#opening_hours").html(openhour);
 
-            let delname;
-            if (tags["delivery:covid19"] != null) {
-                delname = Conf.category.delivery[tags["delivery:covid19"]] + Conf.category.suffix_covid19;
-            } else {
-                delname = tags.delivery == null ? "-" : Conf.category.delivery[tags.delivery];
-            }
-            $("#delivery").html(delname);
-
-            let cuisine;
+            // cuisine
+            let cuisine = [];
             if (tags.cuisine != null) {
-                cuisine = tags.cuisine.split(";").map(
-                    (key) => {
-                        return Conf.category.cuisine[key] || key;
-                    }
-                ).join(", ");
-            } else {
-                cuisine = "-";
-            }
-            $("#cuisine").html(cuisine);
+                cuisine = tags.cuisine.split(";").map(key => {
+                    return Conf.category.cuisine[key] || key;
+                });
+            };
+
+            // cuisine(diet)
+            let diet = Object.keys(Conf.category.diet).map(key => {
+                if (tags[key] != null) {
+                    if (tags[key] !== "no") return Conf.category.diet[key] || key;
+                }
+            });
+            cuisine = cuisine.concat(diet);
+            cuisine = cuisine.filter(Boolean);
+            cuisine = cuisine.join(', ');
+            $("#cuisine").html(cuisine == "" ? "-" : cuisine);
 
             let outseet = YESNO.indexOf(tags.outdoor_seating) < 0 ? "" : tags.outdoor_seating;
             if (outseet !== "") {
@@ -189,13 +192,27 @@ var Takeaway = (function () {
                 $("#outdoor_seating").removeAttr("glot-model");
             };
 
-            let takeaway = YESNO.indexOf(tags.takeaway) < 0 ? "" : tags.takeaway;
-            if (takeaway !== "") {
-                $("#takeaway").attr("glot-model", "takeaway_" + takeaway);
+            // takeout
+            let takeaway;
+            if (tags["takeaway:covid19"] != null) {
+                takeaway = Conf.category.takeaway[tags["takeaway:covid19"]];
+                takeaway = takeaway == undefined ? "?" : takeaway + Conf.category.suffix_covid19;
             } else {
-                $("#takeaway").removeAttr("glot-model");
-                $("#takeaway").html("-");
-            };
+                takeaway = tags.takeaway == null ? "-" : Conf.category.takeaway[tags.takeaway];
+                takeaway = takeaway == undefined ? "?" : takeaway;
+            }
+            $("#takeaway").html(takeaway);
+
+            // delivery
+            let delname;
+            if (tags["delivery:covid19"] != null) {
+                delname = Conf.category.delivery[tags["delivery:covid19"]];
+                delname = delname == undefined ? "?" : delname + Conf.category.suffix_covid19;
+            } else {
+                delname = tags.delivery == null ? "-" : Conf.category.delivery[tags.delivery];
+                delname = delname == undefined ? "?" : delname;
+            }
+            $("#delivery").html(delname);
 
             $("#phone").attr('href', tags.phone == null ? "" : "tel:" + tags.phone);
             $("#phone_view").html(tags.phone == null ? "-" : tags.phone);
@@ -205,7 +222,7 @@ var Takeaway = (function () {
             fld.sns_instagram = tags["contact:instagram"] == null ? tags["instagram"] : tags["contact:instagram"];
             fld.sns_twitter = tags["contact:twitter"] == null ? tags["twitter"] : tags["contact:twitter"];
             fld.sns_facebook = tags["contact:facebook"] == null ? tags["facebook"] : tags["contact:facebook"];
-            Object.keys(fld).forEach(function (key) {
+            Object.keys(fld).forEach(key => {
                 if (fld[key] == null) {
                     $("#" + key).hide();
                 } else {
@@ -213,7 +230,7 @@ var Takeaway = (function () {
                 };
             });
 
-            $("#description").html(tags.description == null ? "-" : tags.description);
+            $("#description").html(tags.description == null ? "-" : tags.description.trim());
 
             glot.render();
             $('#PoiView_Modal').modal({ backdrop: 'static', keyboard: true });
@@ -240,10 +257,9 @@ var Takeaway = (function () {
                     DataList.view(targets);
                     DisplayStatus.splash(false);
                     if (location.search !== "") {    // 引数がある場合
-                        let osmid = location.search.replace(/[?&]fbclid.*/, '');
-                        osmid = osmid.replace('-', '/');
-                        osmid = osmid.replace('=', '');
-                        let tags = PoiCont.get_osmid(osmid.slice(1)).geojson.properties;
+                        let osmid = location.search.replace(/[?&]fbclid.*/, '');    // facebook対策
+                        osmid = osmid.replace('-', '/').replace('=', '/').slice(1);
+                        let tags = PoiCont.get_osmid(osmid).geojson.properties;
                         if (tags !== undefined) Takeaway.view(tags.id);
                     }
                     LL.busy = false;
@@ -282,21 +298,28 @@ var Takeaway = (function () {
             if (address !== "") window.open(address);
         },
 
-        sharemap: osmid => {
-            let _osmid = osmid.replace('/', "-");
-            let cpboard = location.origin + location.pathname + "?" + _osmid + location.hash;
-            $(document.body).append("<textarea id=\"copyTarget\" style=\"position:absolute; left:-9999px; top:0px;\">" + cpboard + "</textarea>");
-            let obj = document.getElementById("copyTarget");
-            let range = document.createRange();
-            range.selectNode(obj);
-            window.getSelection().removeAllRanges();
-            window.getSelection().addRange(range);
-            document.execCommand('copy');
+        sharemap: () => {
+            execCopy(location.href);
             $("#copyTarget").remove();
-            $('#copied').addClass( 'copied');
-        },
-        sharemapEnd: () => {
-            $('#copied').removeClass( 'copied');
-        },
+            $('#copied').one('animationend', () => $('#copied').removeClass('copied'));
+            $('#copied').addClass('copied');
+        }
     }
 })();
+
+function execCopy(string) {
+    // ClipBord Copy
+    let pre = document.createElement('pre');
+    pre.style.webkitUserSelect = 'auto';
+    pre.style.userSelect = 'auto';
+
+    let text = document.createElement("div");
+    text.appendChild(pre).textContent = string;
+    text.style.position = 'fixed';
+    text.style.right = '200%';
+    document.body.appendChild(text);
+    document.getSelection().selectAllChildren(text);
+    let copy = document.execCommand("copy");
+    document.body.removeChild(text);
+    return copy;
+}

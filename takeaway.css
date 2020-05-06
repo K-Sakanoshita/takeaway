@@ -50,14 +50,12 @@ header {
     overflow: hidden;
 }
 
-
 /* Map Area */
 
 #mapid {
     margin: 0px;
     width: 100%;
 }
-
 
 /* Data area */
 
@@ -68,7 +66,6 @@ header {
     width: 100%;
 }
 
-
 /* Data area */
 
 #dataid {
@@ -76,7 +73,6 @@ header {
     padding: 1px;
     width: 100%;
 }
-
 
 /* table area(include Data area) */
 
@@ -90,7 +86,6 @@ header {
     background-color: rgba(255, 255, 255, 0.5);
     padding: 10px;
 }
-
 
 /* default parts set */
 
@@ -119,7 +114,7 @@ div.icon {
 }
 
 a.icon {
-    color: white;    
+    color: white;
 }
 
 img.icon {
@@ -142,33 +137,32 @@ pre {
     font-size: 100% !important;
 }
 
-.updated::after {
-    content: " 【更新】";
-    color: red;
-    font-weight: bold;
-}
-
 .modal-backdrop {
     background-color: initial !important;
     opacity: 1 !important;
 }
 
 #copied {
-    color: gray;
-    background-color: aqua;
+    background-color: rgb(255, 193, 7);
     padding: 0.5em;
-    left: -20em;
-    width: 19em;
+    left: 0em;
     position: absolute;
     z-index: 2;
     opacity: 0;
 }
+
 .copied {
     animation: copyCompleted 2s;
 }
-@keyframes copyCompleted {
-    0% { opacity: 1;}
-    50% { opacity: 1;}
-    100% { opacity: 0;}
-}
 
+@keyframes copyCompleted {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
