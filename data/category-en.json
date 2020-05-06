@@ -106,14 +106,14 @@
             "yakitori": "yakitori"
         },
         "takeaway": {
-            "yes": "yes",
-            "no": "no",
-            "only": "only"
+            "yes": "take out",
+            "no": "no take out",
+            "only": "take out only"
         },
         "delivery": {
-            "yes": "yes",
-            "no": "no",
-            "only": "only"
+            "yes": "delivery",
+            "no": "no delivery",
+            "only": "delivery only"
         },
         "diet": {
             "diet:pescetarian": "pescetarian",
