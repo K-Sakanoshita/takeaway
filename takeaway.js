@@ -35,6 +35,15 @@ $(document).ready(function () {
         DisplayStatus.make_menu();          // Menu
         DataList.init();
 
+        // Google Analytics
+        if (Conf.local.GoogleAnalytics !== "") {
+            $('head').append('<script async src="https://www.googletagmanager.com/gtag/js?id=' + Conf.local.GoogleAnalytics +'"></script>');
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); };
+            gtag('js', new Date());
+            gtag('config', Conf.local.GoogleAnalytics);
+        };
+
         // initialize leaflet
         console.log("initialize leaflet.");
         map = L.map('mapid', { center: Conf.local.DefaultCenter, zoom: Conf.local.DefaultZoom, maxZoom: 21 });
@@ -160,7 +169,7 @@ var Takeaway = (function () {
             };
             let RegexPTN = [[/\|\|/g, "<br>"], [/;/g, "<br>"]];
             Object.keys(Conf.opening_hours).forEach(key => {
-                RegexPTN.push([new RegExp(key, "g"),Conf.opening_hours[key]]);
+                RegexPTN.push([new RegExp(key, "g"), Conf.opening_hours[key]]);
             });
             RegexPTN.forEach(val => { openhour = openhour.replace(val[0], val[1]) });
             if (tags["opening_hours:covid19"] != null) { openhour += Conf.category.suffix_covid19 }
