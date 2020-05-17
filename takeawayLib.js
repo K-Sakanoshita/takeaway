@@ -106,16 +106,19 @@ var Marker = (function () {
                     let html;
                     let tags = node.properties;
                     let name = tags.name == undefined || Conf.local.TextViewZoom > map.getZoom() ? "" : tags.name;
+                    let keyn = tags.amenity !== undefined ? "amenity" : "shop";
+                    let icon = Conf.icon[keyn][tags[keyn]];
+                    icon = "./image/" + (icon !== undefined ? icon : Conf.icon.default);
+                    tags.takeaway_icon = icon;   // icon情報を埋め込み(詳細情報表示で利用)
                     switch (name) {
                         case "":
-                            html = '<img class="icon" src="' + Conf.target[target].icon + '">'
+                            html = '<img class="icon" src="' + icon + '">'
                             break;
                         default:
-                            html = '<div class="d-flex align-items-center"><img class="icon" src="' + Conf.target[target].icon + '"><span class="icon">' + name + '</span></div>'
+                            html = '<div class="d-flex align-items-center"><img class="icon" src="' + icon + '"><span class="icon">' + name + '</span></div>'
                             break;
                     }
-                    let icon = L.divIcon({ "className": 'icon', "iconAnchor": [8, 8] , "html": html});
-                    tags.takeaway_icon = Conf.target[target].icon;   // icon情報を埋め込み(詳細情報表示で利用)
+                    icon = L.divIcon({ "className": 'icon', "iconAnchor": [8, 8] , "html": html});
                     markers[target].push(L.marker(new L.LatLng(pois.latlng[idx].lat, pois.latlng[idx].lng), { icon: icon, draggable: false }));
                     markers[target][markers[target].length - 1].addTo(map).on('click', e => Takeaway.view(e.target.takeaway_id));
                     markers[target][markers[target].length - 1].takeaway_id = tags.id;

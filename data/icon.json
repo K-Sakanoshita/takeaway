@@ -1,0 +1,45 @@
+{
+    "icon": {
+        "default": "bentou.svg",
+        "amenity": {
+            "library": "library.svg",
+            "bar": "bentou.svg",
+            "cafe": "cafe.svg",
+            "drinking_water": "water.svg",
+            "fast_food": "fastfood.svg",
+            "food_court": "fastfood.svg",
+            "ice_cream": "confectionery.svg",
+            "pub": "bar.svg",
+            "restaurant": "restaurant.svg",
+            "vending_machine": "vending.svg"
+        },
+        "shop": {
+            "alcohol": "bar.svg",
+            "bakery": "bakery.svg",
+            "beverages": "water.svg",
+            "brewing_supplies": "bar.svg",
+            "butcher": "bentou.png",
+            "cheese": "bentou.png",
+            "chocolate": "confectionery.svg",
+            "coffee": "cafe.svg",
+            "confectionery": "confectionery.svg",
+            "convenience": "bentou.png",
+            "deli": "bentou.png",
+            "dairy": "bentou.png",
+            "farm": "bentou.png",
+            "frozen_food": "deli.svg",
+            "greengrocer": "bentou.png",
+            "health_food": "bentou.png",
+            "ice_cream": "confectionery.svg",
+            "pasta": "bentou.png",
+            "pastry": "pastry.svg",
+            "seafood": "bentou.png",
+            "spices": "bentou.png",
+            "tea": "cafe.svg",
+            "water": "water.svg",
+            "wine": "bar.svg",
+            "kiosk": "bentou.svg",
+            "supermarket": "bentou.svg"
+        }
+    }
+}
