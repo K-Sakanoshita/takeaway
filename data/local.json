@@ -76,7 +76,7 @@
                 "node[\"amenity\"=\"vending_machine\"][\"vending\"=\"drinks\"]"
             ],
             "list": false,
-            "zoom": 17
+            "zoom": 18
         },
         "library": {
             "ovpass": [
