@@ -7,14 +7,14 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xml:space="default"
-   version="1.1"
-   viewBox="0 0 250 250"
-   width="250"
-   height="250"
-   id="svg6"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
    sodipodi:docname="library.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+   id="svg6"
+   height="250"
+   width="250"
+   viewBox="0 0 250 250"
+   version="1.1"
+   xml:space="default">
   <metadata
      id="metadata12">
     <rdf:RDF>
@@ -29,41 +29,42 @@
   <defs
      id="defs10" />
   <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1027"
-     id="namedview8"
-     showgrid="false"
-     inkscape:zoom="1.888"
-     inkscape:cx="178.42201"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="svg6"
+     inkscape:window-maximized="0"
+     inkscape:window-y="0"
+     inkscape:window-x="156"
      inkscape:cy="79.862105"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg6" />
+     inkscape:cx="178.42201"
+     inkscape:zoom="1.888"
+     showgrid="false"
+     id="namedview8"
+     inkscape:window-height="1050"
+     inkscape:window-width="1170"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
   <title
      id="title2">日本の地図記号 - 図書館</title>
   <path
-     inkscape:connector-curvature="0"
-     style="fill:#ffffff;stroke-width:2.03389978"
+     id="path2-3"
      d="m 221.7135,250.74427 c 16.64146,0 30.11217,-13.35307 30.11217,-29.88808 V 30.233851 c 0,-16.536008 -13.47071,-29.92114503 -30.11217,-29.92114503 H 29.875479 c -16.641512,0 -30.11216921,13.38513703 -30.11216921,29.92114503 V 220.85796 c 0,16.5358 13.47065721,29.88865 30.11216921,29.88865 H 221.7135 Z"
-     id="path2-3" />
+     style="fill:#ffffff;stroke-width:2.03389978"
+     inkscape:connector-curvature="0" />
   <path
-     inkscape:connector-curvature="0"
-     style="fill:#d38d5f;stroke-width:1.91375089"
+     id="path4-4"
      d="m 33.690912,13.518759 c -13.126878,0 -23.8101831,10.370316 -23.8101831,23.112833 V 213.91293 c 0,12.74184 10.6833051,23.09719 23.8101831,23.09719 H 216.30913 c 13.14234,0 23.81014,-10.35535 23.81014,-23.09719 V 36.633665 c 0,-12.742567 -10.66775,-23.112685 -23.81014,-23.112685 H 33.683134 Z"
-     id="path4-4" />
+     style="fill:#ef9235;stroke-width:1.91375089;fill-opacity:1"
+     inkscape:connector-curvature="0" />
   <path
-     d="M 66.758034,204.49108 27.934262,92.736975 C 42.051998,67.713156 69.699228,59.182308 110.87596,67.144433 132.05257,45.532952 155.87624,38.708274 182.347,46.670398 l 36.23359,104.298272 2.59018,7.45584 c -34.11785,-7.96214 -57.94153,-1.13746 -71.47103,20.47401 -40.00026,-7.96212 -68.23573,0.56874 -84.706421,25.59256 L 27.934262,92.736975 M 110.87596,67.144433 144.40559,174.63311"
-     id="path4"
+     sodipodi:nodetypes="ccccccccccc"
+     style="display:inline;fill:#ffffff;stroke:#ef9235;stroke-width:4.25114;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      inkscape:connector-curvature="0"
-     style="fill:#ffffff;stroke:#000001;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.5970149"
-     sodipodi:nodetypes="ccccccccccc" />
+     id="path4"
+     d="M 63.771108,216.90484 22.779706,97.352162 C 37.685671,70.582098 66.876517,61.45594 110.35225,69.973688 132.71121,46.854086 157.86502,39.55316 185.8137,48.070907 l 38.25661,111.576553 2.73479,7.97613 c -36.02273,-8.51777 -61.17655,-1.21683 -75.46143,21.90275 -42.23358,-8.51774 -72.045514,0.60843 -89.435806,27.3785 L 22.779706,97.352162 M 110.35225,69.973688 145.75393,184.96328" />
 </svg>

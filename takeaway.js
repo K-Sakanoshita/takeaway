@@ -11,7 +11,7 @@ const OvGetError = "サーバーからのデータ取得に失敗しました。
 // const OvServer = 'https://overpass.kumi.systems/api/interpreter' // or 'https://overpass-api.de/api/interpreter' or 'https://overpass.nchc.org.tw/api/interpreter'
 const OvServer = 'https://overpass.nchc.org.tw/api/interpreter'
 const LANG = (window.navigator.userLanguage || window.navigator.language || window.navigator.browserLanguage).substr(0, 2) == "ja" ? "ja" : "en";
-const FILES = ['modals.html', 'data/category-' + LANG + '.json', 'data/datatables-' + LANG + '.json', 'data/local.json'];
+const FILES = ['modals.html', 'data/category-' + LANG + '.json', 'data/datatables-' + LANG + '.json', 'data/icon.json', 'data/local.json'];
 
 $(document).ready(function () {
 
@@ -23,7 +23,7 @@ $(document).ready(function () {
     $.when.apply($, jqXHRs).always(function () {
         // initialize variable
         $("#Modals").html(arguments[0][0]);
-        for (let idx = 1; idx <= 3; idx++) {
+        for (let idx = 1; idx <= 4; idx++) {
             let arg = arguments[idx][0];
             Object.keys(arg).forEach(key1 => {
                 Conf[key1] = {};
@@ -37,7 +37,7 @@ $(document).ready(function () {
 
         // Google Analytics
         if (Conf.local.GoogleAnalytics !== "") {
-            $('head').append('<script async src="https://www.googletagmanager.com/gtag/js?id=' + Conf.local.GoogleAnalytics +'"></script>');
+            $('head').append('<script async src="https://www.googletagmanager.com/gtag/js?id=' + Conf.local.GoogleAnalytics + '"></script>');
             window.dataLayer = window.dataLayer || [];
             function gtag() { dataLayer.push(arguments); };
             gtag('js', new Date());
