@@ -222,9 +222,12 @@ var Takeaway = (function () {
                 delname = delname == undefined ? "?" : delname;
             }
             $("#delivery").html(delname);
-
-            $("#phone").attr('href', tags.phone == null ? "" : "tel:" + tags.phone);
-            $("#phone_view").html(tags.phone == null ? "-" : tags.phone);
+            
+            if (tags.phone != null) {
+                $("#phone").html("<a href=\"" + ("tel:" + tags.phone) + "\">" + tags.phone + "</a>");
+            } else {
+                $("#phone").html("-");
+            }
 
             let fld = {};
             fld.website = tags["contact:website"] == null ? tags["website"] : tags["contact:website"];
