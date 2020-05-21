@@ -1,11 +1,1 @@
-<?xml version="1.0" encoding="utf-8"?>
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 8 3" width="8" height="3">
-<g name="signal" transform="scale(0.80351382,0.84353771)">
-	<path style="fill:#666666" d="M 8.2,3.6 H 1.8 C 0.8,3.6 0,2.8 0,1.8 v 0 C 0,0.8 0.8,0 1.8,0 h 6.4 c 1,0 1.8,0.8 1.8,1.8 v 0 c 0,1 -0.8,1.8 -1.8,1.8 z"/>
-	<g>
-		<circle style="fill:#eeeeee;" cx="1.9" cy="1.8" r="1"/>
-		<circle style="fill:#eeeeef;" cx="5" cy="1.8" r="1"/>
-		<circle style="fill:#eeeeef;" cx="8.1000004" cy="1.8" r="1"/>
-	</g>
-</g>
-</svg>
+<svg height="3" viewBox="0 0 8 3" width="8" xmlns="http://www.w3.org/2000/svg"><g name="signal" transform="scale(.80351382 .84353771)"><path d="m8.2 3.6h-6.4c-1 0-1.8-.8-1.8-1.8 0-1 .8-1.8 1.8-1.8h6.4c1 0 1.8.8 1.8 1.8 0 1-.8 1.8-1.8 1.8z" fill="#666"/><circle cx="1.9" cy="1.8" fill="#eee" r="1"/><g fill="#eeeeef"><circle cx="5" cy="1.8" r="1"/><circle cx="8.1" cy="1.8" r="1"/></g></g></svg>
