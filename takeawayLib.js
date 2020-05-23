@@ -43,7 +43,9 @@ var PoiCont = (function () {
                 let tags = node.properties;
                 let _7DaysAgo = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 7);                //更新一週間以内のデータには印を付加する
                 let update = "<span class='text-danger'>" + glot.get("list_update") + "</span>";
-                let name = tags.name == undefined ? "-" : tags.name + (_7DaysAgo < new Date(tags.timestamp) ? update : '');
+                let name = (tags.name == undefined ? "-" : tags.name) + 
+                    (tags.branch == undefined ? "" : " " + tags.branch) + 
+                    (_7DaysAgo < new Date(tags.timestamp) ? update : '');
                 let category = PoiCont.get_catname(tags);
                 let between = Math.round(PoiCont.calc_between(latlngs[tags.id], map.getCenter()));
                 let target = pois.targets[idx].join(',');
