@@ -24,6 +24,11 @@
     },
     "datatables_columns": [
         {
+            "title": "",
+            "data": "bookmark",
+            "width": "5%"
+        },
+        {
             "title": "名前",
             "data": "name",
             "width": "45%"
@@ -31,12 +36,12 @@
         {
             "title": "種類",
             "data": "category",
-            "width": "30%"
+            "width": "27%"
         },
         {
             "title": "距離",
             "data": "between",
-            "width": "15%"
+            "width": "13%"
         },
         {
             "title": "対象",

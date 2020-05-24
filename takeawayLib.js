@@ -39,17 +39,22 @@ var PoiCont = (function () {
         list: function (targets) {              // DataTables向きのJsonデータリストを出力
             let pois = poi_filter(targets);     // targetsに指定されたpoiのみフィルター
             let datas = [];
+            let _7DaysAgo = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 7); //更新一週間以内のデータには印を付加する
+            let update = "<span class='text-danger'>" + glot.get("list_update") + "</span>";
+            let bookmarkFalse = "<span>☆</span>";
             pois.geojson.forEach((node, idx) => {
                 let tags = node.properties;
-                let _7DaysAgo = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 7);                //更新一週間以内のデータには印を付加する
-                let update = "<span class='text-danger'>" + glot.get("list_update") + "</span>";
                 let name = (tags.name == undefined ? "-" : tags.name) + 
                     (tags.branch == undefined ? "" : " " + tags.branch) + 
                     (_7DaysAgo < new Date(tags.timestamp) ? update : '');
                 let category = PoiCont.get_catname(tags);
                 let between = Math.round(PoiCont.calc_between(latlngs[tags.id], map.getCenter()));
                 let target = pois.targets[idx].join(',');
-                datas.push({ "osmid": tags.id, "name": name, "category": category, "between": between, "target": target });
+                const bookmarked = bookmark.isBookmarked(tags.id);
+                const bookmarkLabel = "<span id='bm_2" + tags.id + "' bookmark='" + bookmarked +
+                    "' osmid='" + tags.id + "' ' onclick='bookmark.toggle(this)'>" + (bookmarked ? "★":"☆") + "</span>";
+                datas.push({ "osmid": tags.id, "bookmark": bookmarkLabel, "name": name, 
+                    "category": category, "between": between, "target": target });
             });
             datas.sort((a, b) => {
                 if (a.between > b.between) {
@@ -93,6 +98,57 @@ var PoiCont = (function () {
         return { geojson: pois, latlng: lls, targets: tars };
     };
 })();
+const STORAGE_KEY_BOOKMARK = 'takeaway_bookmarks';
+class Bookmark {
+    load () {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY_BOOKMARK);
+            this.bookmarks = (saved == null) ? [] : saved.split(","); // List of OSM IDs
+            console.log("Bookmark");
+            console.log(saved);
+        } catch (e) {
+            this.bookmarks = [];
+            alert("Sorry, your browser does not support local storage.");
+        }
+    }
+    isBookmarked (osmId) {
+        return this.bookmarks.indexOf(osmId) > -1;
+    }
+    toggle (sender) {
+        const osmId = sender.getAttribute("osmid");
+        let bookmarked = sender.getAttribute("bookmarked") =='true';
+        bookmarked = !bookmarked;
+        sender.innerHTML = (bookmarked) ? "★" : "☆";
+        if (bookmarked) {
+            this.add(osmId);
+        } else {
+            this.remove(osmId);
+        }
+        this.save();
+    }
+    add (osmId) {
+        if (!this.isBookmarked(osmId)) {
+            console.log(this.bookmarks);
+            this.bookmarks.push(osmId);
+        }
+    }
+    remove (osmId) {
+        const index = this.bookmarks.indexOf(osmId);
+        if (index > -1) {
+            console.log(this.bookmarks);
+            this.bookmarks.splice(index, 1);
+        }
+    }
+    save () {
+        try {
+            localStorage.setItem(STORAGE_KEY_BOOKMARK, this.bookmarks.join(","));
+        } catch (e) {
+            alert("Sorry, your browser does not support local storage.");
+        }
+    }
+}
+const bookmark = new Bookmark();
+bookmark.load();
 
 // make Marker
 var Marker = (function () {

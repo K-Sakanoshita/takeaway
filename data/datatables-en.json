@@ -24,6 +24,11 @@
     },
     "datatables_columns": [
         {
+            "title": "",
+            "data": "bookmark",
+            "width": "5%"
+        },
+        {
             "title": "name",
             "data": "name",
             "width": "45%"
@@ -31,12 +36,12 @@
         {
             "title": "category",
             "data": "category",
-            "width": "30%"
+            "width": "27%"
         },
         {
             "title": "between",
             "data": "between",
-            "width": "15%"
+            "width": "13%"
         },
         {
             "title": "target",
