@@ -116,7 +116,7 @@ class Bookmark {
     }
     toggle (sender) {
         const osmId = sender.getAttribute("osmid");
-        let bookmarked = sender.getAttribute("bookmarked") =='true';
+        let bookmarked = sender.getAttribute("bookmark") =='true';
         bookmarked = !bookmarked;
         sender.innerHTML = (bookmarked) ? "★" : "☆";
         if (bookmarked) {
@@ -128,14 +128,12 @@ class Bookmark {
     }
     add (osmId) {
         if (!this.isBookmarked(osmId)) {
-            console.log(this.bookmarks);
             this.bookmarks.push(osmId);
         }
     }
     remove (osmId) {
         const index = this.bookmarks.indexOf(osmId);
         if (index > -1) {
-            console.log(this.bookmarks);
             this.bookmarks.splice(index, 1);
         }
     }
