@@ -41,19 +41,17 @@ var PoiCont = (function () {
             let datas = [];
             let _7DaysAgo = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 7); //更新一週間以内のデータには印を付加する
             let update = "<span class='text-danger'>" + glot.get("list_update") + "</span>";
-            let bookmarkFalse = "<span>☆</span>";
             pois.geojson.forEach((node, idx) => {
                 let tags = node.properties;
-                let name = (tags.name == undefined ? "-" : tags.name) + 
-                    (tags.branch == undefined ? "" : " " + tags.branch) + 
-                    (_7DaysAgo < new Date(tags.timestamp) ? update : '');
+                const name = (tags.name == undefined ? "-" : tags.name) + 
+                    (tags.branch == undefined ? "" : " " + tags.branch);
+                let nameLabel = name + (_7DaysAgo < new Date(tags.timestamp) ? update : '');
+                    
                 let category = PoiCont.get_catname(tags);
                 let between = Math.round(PoiCont.calc_between(latlngs[tags.id], map.getCenter()));
                 let target = pois.targets[idx].join(',');
-                const bookmarked = bookmark.isBookmarked(tags.id);
-                const bookmarkLabel = "<span id='bm_2" + tags.id + "' bookmark='" + bookmarked +
-                    "' osmid='" + tags.id + "' ' onclick='event.stopPropagation();bookmark.toggle(this)'>" + (bookmarked ? "★":"☆") + "</span>";
-                datas.push({ "osmid": tags.id, "bookmark": bookmarkLabel, "name": name, 
+                const bookmarkLabel = bookmark.createTag(tags.id);
+                datas.push({ "osmid": tags.id, "bookmark": bookmarkLabel, "name": nameLabel, 
                     "category": category, "between": between, "target": target });
             });
             datas.sort((a, b) => {
@@ -103,44 +101,79 @@ class Bookmark {
     load () {
         try {
             const saved = localStorage.getItem(STORAGE_KEY_BOOKMARK);
-            this.bookmarks = (saved == null) ? [] : saved.split(","); // List of OSM IDs
-            console.log("Bookmark");
-            console.log(saved);
+            this.bookmarks = (saved == null) ? {} : JSON.parse(saved);
         } catch (e) {
-            this.bookmarks = [];
+            this.bookmarks = {};
             alert("Sorry, your browser does not support local storage.");
         }
     }
+    createTag (osmid) {
+        const bookmarked = this.isBookmarked(osmid);
+        const bookmarkLabel = "<span title='Bookmark'" + 
+            "id='bm_" + osmid + 
+            "' bookmark='" + bookmarked +
+            "' class='" + bookmark.getClassName(bookmarked) + 
+            "' osmid='" + osmid +
+            "' onclick='event.stopPropagation();bookmark.toggleByTable(this)'><i class='fas fa-star'></i></span>";
+        return bookmarkLabel;
+    }
+    getClassName (bookmarked) {
+        return "bookmark bookmark_" + ((bookmarked) ? "true" : "false");
+    }
     isBookmarked (osmId) {
-        return this.bookmarks.indexOf(osmId) > -1;
+        return this.bookmarks[osmId] != undefined;
     }
-    toggle (sender) {
-        const osmId = sender.getAttribute("osmid");
-        let bookmarked = sender.getAttribute("bookmark") =='true';
-        bookmarked = !bookmarked;
-        sender.innerHTML = (bookmarked) ? "★" : "☆";
+    /* Toggle bookmark (by table icon) */
+    toggleByTable (sender) {
+        const osmid = sender.getAttribute("osmid");
+        const bookmarked = sender.getAttribute("bookmark") != 'true';
+        this.setBookmark(osmid, bookmarked);
+    }
+    /* Toggle bookmark (by modal button) */
+    setBookmarkByModal (osmid, bookmarked) {
+        this.setBookmark(osmid, bookmarked);
+    }
+    setBookmark (osmid, bookmarked) {
         if (bookmarked) {
-            this.add(osmId);
+            const poi = PoiCont.get_osmid(osmid);
+            const tags = poi.geojson.properties;
+            let obj = {
+                "lat" : poi.latlng.lat,
+                "lng" : poi.latlng.lng,
+                "timestamp": new Date().getTime()
+            };
+            if (tags.name) {
+                obj.name = tags.name;
+            }
+            if (tags.branch) {
+                obj.branch = tags.branch;
+            }
+            this.add(osmid, obj);
         } else {
-            this.remove(osmId);
+            this.remove(osmid);
         }
-        sender.setAttribute("bookmark", bookmarked);
         this.save();
-    }
-    add (osmId) {
-        if (!this.isBookmarked(osmId)) {
-            this.bookmarks.push(osmId);
+        // テーブル左の★アイコンのスタイル及び属性を変更
+        const icon = document.getElementById("bm_" + osmid);
+        if (icon) {
+            icon.setAttribute("bookmark", bookmarked);
+            icon.className = this.getClassName(bookmarked);
         }
     }
-    remove (osmId) {
-        const index = this.bookmarks.indexOf(osmId);
-        if (index > -1) {
-            this.bookmarks.splice(index, 1);
+    add (osmid, obj) {
+        console.log("add");
+        console.log(obj);
+        this.bookmarks[osmid] = obj;
+    }
+    remove (osmid) {
+        if (!this.isBookmarked(osmid)) {
+            delete this.bookmarks[osmid];
         }
     }
     save () {
         try {
-            localStorage.setItem(STORAGE_KEY_BOOKMARK, this.bookmarks.join(","));
+            localStorage.setItem(STORAGE_KEY_BOOKMARK, JSON.stringify(this.bookmarks));
+            console.log(this.bookmarks);
         } catch (e) {
             alert("Sorry, your browser does not support local storage.");
         }
@@ -252,7 +285,7 @@ var DataList = (function () {
             table = $('#tableid').DataTable({
                 "autoWidth": true,
                 "columns": Object.keys(Conf.datatables_columns).map(function (key) { return Conf.datatables_columns[key] }),
-                "columnDefs": [{ "targets": 2, "render": $.fn.dataTable.render.number(',', '.', 0, '', 'm') }, { targets: 3, visible: false }],
+                "columnDefs": [{ "targets": 3, "render": $.fn.dataTable.render.number(',', '.', 0, '', 'm') }, { targets: 4, visible: false }],
                 "data": result,
                 "processing": true,
                 "filter": true,

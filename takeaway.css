@@ -80,6 +80,38 @@ header {
     width: 100%;
     font-size: 90%;
 }
+.bookmark {
+}
+.bookmark_true {
+  color:rgb(239, 143, 53);
+}
+.bookmark_false {
+  color:rgb(127,127,127);
+  visibility: hidden;
+}
+.btn-bookmark-false {
+    color: #6c757d!important;
+    border-color: #6c757d!important;
+}
+.btn-bookmark-false:hover {
+    color: #fff!important;
+    background-color: #6c757d!important;
+    border-color: #6c757d!important;
+}
+.btn-bookmark-true {
+    color: #ffffff!important;
+    background-color: #ef8f35!important;
+    border-color: #ef8f35!important;
+}
+.btn-bookmark-true:hover {
+    color: #ffffff!important;
+    background-color: #f1a35b!important;
+    border-color: #d39e00!important;
+}
+
+#tableid tr:hover .bookmark_false {
+  visibility: visible!important;
+}
 
 #morezoom h1 {
     color: rgba(0, 0, 0, 1);

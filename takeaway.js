@@ -151,6 +151,7 @@ var Takeaway = (function () {
             let poi = PoiCont.get_osmid(osmid);
             let tags = poi.geojson.properties;
             let date = moment(tags.timestamp);
+            const osmidOrig = osmid;
             osmid = osmid.replace('/', "=");
             history.replaceState('', '', location.pathname + "?" + osmid + location.hash);
 
@@ -197,6 +198,20 @@ var Takeaway = (function () {
             cuisine = cuisine.filter(Boolean);
             cuisine = cuisine.join(', ');
             $("#cuisine").html(cuisine == "" ? "-" : cuisine);
+            
+            let bookmarked = bookmark.isBookmarked(osmidOrig);
+            const CLASS_BOOKMARK_TRUE= "btn-bookmark-true";
+            const CLASS_BOOKMARK_FALSE = "btn-bookmark-false";
+            $("#modal_bookmark").removeClass((bookmarked)?CLASS_BOOKMARK_FALSE:CLASS_BOOKMARK_TRUE);
+            $("#modal_bookmark").addClass((!bookmarked)?CLASS_BOOKMARK_FALSE:CLASS_BOOKMARK_TRUE);
+            $('#modal_bookmark').unbind('click');
+            $('#modal_bookmark').click(()=>{
+                console.log(name);
+                bookmarked = !bookmarked;
+                bookmark.setBookmarkByModal(osmidOrig, bookmarked);
+                $("#modal_bookmark").removeClass((bookmarked)?CLASS_BOOKMARK_FALSE:CLASS_BOOKMARK_TRUE);
+                $("#modal_bookmark").addClass((!bookmarked)?CLASS_BOOKMARK_FALSE:CLASS_BOOKMARK_TRUE);
+            });
 
             let outseet = YESNO.indexOf(tags.outdoor_seating) < 0 ? "" : tags.outdoor_seating;
             if (outseet !== "") {
