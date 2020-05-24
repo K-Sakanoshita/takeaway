@@ -52,7 +52,7 @@ var PoiCont = (function () {
                 let target = pois.targets[idx].join(',');
                 const bookmarked = bookmark.isBookmarked(tags.id);
                 const bookmarkLabel = "<span id='bm_2" + tags.id + "' bookmark='" + bookmarked +
-                    "' osmid='" + tags.id + "' ' onclick='bookmark.toggle(this)'>" + (bookmarked ? "★":"☆") + "</span>";
+                    "' osmid='" + tags.id + "' ' onclick='event.stopPropagation();bookmark.toggle(this)'>" + (bookmarked ? "★":"☆") + "</span>";
                 datas.push({ "osmid": tags.id, "bookmark": bookmarkLabel, "name": name, 
                     "category": category, "between": between, "target": target });
             });
@@ -124,6 +124,7 @@ class Bookmark {
         } else {
             this.remove(osmId);
         }
+        sender.setAttribute("bookmark", bookmarked);
         this.save();
     }
     add (osmId) {
