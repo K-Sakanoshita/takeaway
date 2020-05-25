@@ -82,6 +82,9 @@ header {
 }
 .bookmark {
 }
+.bookmark a {
+  display: none;
+}
 .bookmark_true {
   color:rgb(239, 143, 53);
 }

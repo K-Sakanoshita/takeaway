@@ -109,12 +109,14 @@ class Bookmark {
     }
     createTag (osmid) {
         const bookmarked = this.isBookmarked(osmid);
+        const suffix = (bookmarked)?"bm_true":"bm_false";
         const bookmarkLabel = "<span title='Bookmark'" + 
             "id='bm_" + osmid + 
             "' bookmark='" + bookmarked +
             "' class='" + bookmark.getClassName(bookmarked) + 
             "' osmid='" + osmid +
-            "' onclick='event.stopPropagation();bookmark.toggleByTable(this)'><i class='fas fa-star'></i></span>";
+            "' onclick='event.stopPropagation();bookmark.toggleByTable(this)'><i class='fas fa-star'></i><a href='#'>" + 
+            suffix + "</a></span>";
         return bookmarkLabel;
     }
     getClassName (bookmarked) {
@@ -158,6 +160,9 @@ class Bookmark {
         if (icon) {
             icon.setAttribute("bookmark", bookmarked);
             icon.className = this.getClassName(bookmarked);
+            console.log(icon.getElementsByTagName("A"))
+            const a = icon.getElementsByTagName("A")[0];
+            a.innerHTML = (bookmarked)?"bm_true":"bm_false";
         }
     }
     add (osmid, obj) {
@@ -267,12 +272,20 @@ var DataList = (function () {
                 let keyword = e.target.value == "-" ? "" : e.target.value;
                 DataList.filter(keyword);
             });
+            
+            // ブックマークしたもののみ表示
+            const bookmark_checkbox = document.getElementById("filter_bookmarked");
+            bookmark_checkbox.addEventListener("change", (e)=>{
+                table.column(0).search((e.target.checked)?"bm_true":"").draw();
+            });
         },
         make_select: result => {
             // 店舗種別リストを作成
             let shops = [];
             DisplayStatus.clear_select("category_list");
             DisplayStatus.clear_select("delivery_list");
+            console.log("CLEAR SELECT.");
+            document.getElementById("filter_bookmarked").checked = false;
             DisplayStatus.add_select("delivery_list", Conf.category.delivery.yes, "delivery");
             shops = result.map(data => { return data.category });
             shops = shops.filter((x, i, self) => { return self.indexOf(x) === i });
