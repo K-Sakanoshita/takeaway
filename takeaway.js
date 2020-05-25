@@ -156,7 +156,11 @@ var Takeaway = (function () {
 
             $("#osmid").html(tags.id);
             $("#timestamp").html(date.format("YYYY/MM/DD hh:mm"));
-            $("#name").html(tags.name == null ? "-" : tags.name);
+            let name = tags.name == null ? "" : tags.name;
+            if (tags.branch) {
+                name += " " + tags.branch;
+            }
+            $("#name").html(name == null ? "-" : name);
             $("#category-icon").attr("src", tags.takeaway_icon);
             $("#category").html(PoiCont.get_catname(tags));
 
