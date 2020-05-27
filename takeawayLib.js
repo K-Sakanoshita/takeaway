@@ -49,7 +49,11 @@ var PoiCont = (function () {
                     
                 let category = PoiCont.get_catname(tags);
                 let between = Math.round(PoiCont.calc_between(latlngs[tags.id], map.getCenter()));
-                let target = pois.targets[idx].join(',');
+                const targets = pois.targets[idx];
+                if (bookmark.isBookmarked(tags.id)) {
+                    targets.push("bookmarked");
+                }
+                let target = targets.join(',');
                 const bookmarkLabel = bookmark.createTag(tags.id);
                 datas.push({ "osmid": tags.id, "bookmark": bookmarkLabel, "name": nameLabel, 
                     "category": category, "between": between, "target": target });
@@ -260,10 +264,12 @@ var DataList = (function () {
             // デリバリー選択肢にキーワード追加
             DisplayStatus.clear_select("delivery_list");
             DisplayStatus.add_select("delivery_list", Conf.category.delivery.yes, "delivery");
+            DisplayStatus.add_select("delivery_list", Conf.category.bookmarked, "bookmarked");
             let delivery_list = document.getElementById("delivery_list");
             delivery_list.addEventListener("change", (e) => {
+                console.log(e.target.value);
                 let keyword = e.target.value == "-" ? "" : e.target.value;
-                table.column(3).search(keyword).draw();
+                table.column(4).search(keyword).draw();
             });
 
             // カテゴリ選択時にキーワード検索
@@ -272,21 +278,14 @@ var DataList = (function () {
                 let keyword = e.target.value == "-" ? "" : e.target.value;
                 DataList.filter(keyword);
             });
-            
-            // ブックマークしたもののみ表示
-            const bookmark_checkbox = document.getElementById("filter_bookmarked");
-            bookmark_checkbox.addEventListener("change", (e)=>{
-                table.column(0).search((e.target.checked)?"bm_true":"").draw();
-            });
         },
         make_select: result => {
             // 店舗種別リストを作成
             let shops = [];
             DisplayStatus.clear_select("category_list");
             DisplayStatus.clear_select("delivery_list");
-            console.log("CLEAR SELECT.");
-            document.getElementById("filter_bookmarked").checked = false;
             DisplayStatus.add_select("delivery_list", Conf.category.delivery.yes, "delivery");
+            DisplayStatus.add_select("delivery_list", Conf.category.bookmarked, "bookmarked");
             shops = result.map(data => { return data.category });
             shops = shops.filter((x, i, self) => { return self.indexOf(x) === i });
             shops.map(shop => DisplayStatus.add_select("category_list", shop, shop));

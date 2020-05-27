@@ -129,7 +129,8 @@
             "diet:halal": "ハラル",
             "diet:kosher": "コーシェル"
         },
-        "suffix_covid19": "(暫定)"
+        "suffix_covid19": "(暫定)",
+        "bookmarked": "スターつき"
     },
     "opening_hours": {
         "Mo": "月",
