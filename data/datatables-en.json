@@ -26,7 +26,7 @@
         {
             "title": "",
             "data": "bookmark",
-            "width": "5%"
+            "width": "0%"
         },
         {
             "title": "name",
@@ -36,12 +36,12 @@
         {
             "title": "category",
             "data": "category",
-            "width": "27%"
+            "width": "30%"
         },
         {
             "title": "between",
             "data": "between",
-            "width": "13%"
+            "width": "15%"
         },
         {
             "title": "target",

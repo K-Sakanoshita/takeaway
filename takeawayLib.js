@@ -50,11 +50,14 @@ var PoiCont = (function () {
                 let category = PoiCont.get_catname(tags);
                 let between = Math.round(PoiCont.calc_between(latlngs[tags.id], map.getCenter()));
                 const targets = pois.targets[idx];
-                if (bookmark.isBookmarked(tags.id)) {
-                    targets.push("bookmarked");
+                let bookmarkLabel = "";
+                if (Conf.local.EnableBookmark) {
+                  if (bookmark.isBookmarked(tags.id)) {
+                      targets.push("bookmarked");
+                  }
+                  bookmarkLabel = bookmark.createTag(tags.id);
                 }
                 let target = targets.join(',');
-                const bookmarkLabel = bookmark.createTag(tags.id);
                 datas.push({ "osmid": tags.id, "bookmark": bookmarkLabel, "name": nameLabel, 
                     "category": category, "between": between, "target": target });
             });
@@ -264,7 +267,8 @@ var DataList = (function () {
             // デリバリー選択肢にキーワード追加
             DisplayStatus.clear_select("delivery_list");
             DisplayStatus.add_select("delivery_list", Conf.category.delivery.yes, "delivery");
-            DisplayStatus.add_select("delivery_list", Conf.category.bookmarked, "bookmarked");
+            if (Conf.local.EnableBookmark)
+                DisplayStatus.add_select("delivery_list", Conf.category.bookmarked, "bookmarked");
             let delivery_list = document.getElementById("delivery_list");
             delivery_list.addEventListener("change", (e) => {
                 console.log(e.target.value);
@@ -285,7 +289,8 @@ var DataList = (function () {
             DisplayStatus.clear_select("category_list");
             DisplayStatus.clear_select("delivery_list");
             DisplayStatus.add_select("delivery_list", Conf.category.delivery.yes, "delivery");
-            DisplayStatus.add_select("delivery_list", Conf.category.bookmarked, "bookmarked");
+            if (Conf.local.EnableBookmark)
+                DisplayStatus.add_select("delivery_list", Conf.category.bookmarked, "bookmarked");
             shops = result.map(data => { return data.category });
             shops = shops.filter((x, i, self) => { return self.indexOf(x) === i });
             shops.map(shop => DisplayStatus.add_select("category_list", shop, shop));
@@ -294,10 +299,14 @@ var DataList = (function () {
             DataList.lock(true);
             if (table !== undefined) table.destroy();
             let result = PoiCont.list(targets);
+            let columnDefs = [{ "targets": 3, "render": $.fn.dataTable.render.number(',', '.', 0, '', 'm') }, { targets: 4, visible: false }];
+            if (!Conf.local.EnableBookmark) {
+                columnDefs.push({ targets: 0, visible: false });
+            }
             table = $('#tableid').DataTable({
                 "autoWidth": true,
                 "columns": Object.keys(Conf.datatables_columns).map(function (key) { return Conf.datatables_columns[key] }),
-                "columnDefs": [{ "targets": 3, "render": $.fn.dataTable.render.number(',', '.', 0, '', 'm') }, { targets: 4, visible: false }],
+                "columnDefs": columnDefs,
                 "data": result,
                 "processing": true,
                 "filter": true,

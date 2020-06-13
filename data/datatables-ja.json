@@ -26,7 +26,7 @@
         {
             "title": "",
             "data": "bookmark",
-            "width": "5%"
+            "width": "0%"
         },
         {
             "title": "名前",
@@ -36,12 +36,12 @@
         {
             "title": "種類",
             "data": "category",
-            "width": "27%"
+            "width": "30%"
         },
         {
             "title": "距離",
             "data": "between",
-            "width": "13%"
+            "width": "15%"
         },
         {
             "title": "対象",

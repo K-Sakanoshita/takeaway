@@ -199,19 +199,22 @@ var Takeaway = (function () {
             cuisine = cuisine.join(', ');
             $("#cuisine").html(cuisine == "" ? "-" : cuisine);
             
-            let bookmarked = bookmark.isBookmarked(osmidOrig);
-            const CLASS_BOOKMARK_TRUE= "btn-bookmark-true";
-            const CLASS_BOOKMARK_FALSE = "btn-bookmark-false";
-            $("#modal_bookmark").removeClass((bookmarked)?CLASS_BOOKMARK_FALSE:CLASS_BOOKMARK_TRUE);
-            $("#modal_bookmark").addClass((!bookmarked)?CLASS_BOOKMARK_FALSE:CLASS_BOOKMARK_TRUE);
-            $('#modal_bookmark').unbind('click');
-            $('#modal_bookmark').click(()=>{
-                console.log(name);
-                bookmarked = !bookmarked;
-                bookmark.setBookmarkByModal(osmidOrig, bookmarked);
+            if (Conf.local.EnableBookmark == true) {
+                let bookmarked = bookmark.isBookmarked(osmidOrig);
+                const CLASS_BOOKMARK_TRUE= "btn-bookmark-true";
+                const CLASS_BOOKMARK_FALSE = "btn-bookmark-false";
+                $("#modal_bookmark").show();
                 $("#modal_bookmark").removeClass((bookmarked)?CLASS_BOOKMARK_FALSE:CLASS_BOOKMARK_TRUE);
                 $("#modal_bookmark").addClass((!bookmarked)?CLASS_BOOKMARK_FALSE:CLASS_BOOKMARK_TRUE);
-            });
+                $('#modal_bookmark').unbind('click');
+                $('#modal_bookmark').click(()=>{
+                    console.log(name);
+                    bookmarked = !bookmarked;
+                    bookmark.setBookmarkByModal(osmidOrig, bookmarked);
+                    $("#modal_bookmark").removeClass((bookmarked)?CLASS_BOOKMARK_FALSE:CLASS_BOOKMARK_TRUE);
+                    $("#modal_bookmark").addClass((!bookmarked)?CLASS_BOOKMARK_FALSE:CLASS_BOOKMARK_TRUE);
+                });
+            }
 
             let outseet = YESNO.indexOf(tags.outdoor_seating) < 0 ? "" : tags.outdoor_seating;
             if (outseet !== "") {
