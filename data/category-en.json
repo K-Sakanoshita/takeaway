@@ -129,7 +129,8 @@
             "diet:halal": "halal",
             "diet:kosher": "kosher"
         },
-        "suffix_covid19": "(provisional)"
+        "suffix_covid19": "(provisional)",
+        "bookmarked": "Starred"
     },
         "opening_hours": {
             "Mo": "Mo",

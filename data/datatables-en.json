@@ -24,6 +24,11 @@
     },
     "datatables_columns": [
         {
+            "title": "",
+            "data": "bookmark",
+            "width": "0%"
+        },
+        {
             "title": "name",
             "data": "name",
             "width": "45%"

@@ -39,17 +39,27 @@ var PoiCont = (function () {
         list: function (targets) {              // DataTables向きのJsonデータリストを出力
             let pois = poi_filter(targets);     // targetsに指定されたpoiのみフィルター
             let datas = [];
+            let _7DaysAgo = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 7); //更新一週間以内のデータには印を付加する
+            let update = "<span class='text-danger'>" + glot.get("list_update") + "</span>";
             pois.geojson.forEach((node, idx) => {
                 let tags = node.properties;
-                let _7DaysAgo = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 7);                //更新一週間以内のデータには印を付加する
-                let update = "<span class='text-danger'>" + glot.get("list_update") + "</span>";
-                let name = (tags.name == undefined ? "-" : tags.name) + 
-                    (tags.branch == undefined ? "" : " " + tags.branch) + 
-                    (_7DaysAgo < new Date(tags.timestamp) ? update : '');
+                const name = (tags.name == undefined ? "-" : tags.name) + 
+                    (tags.branch == undefined ? "" : " " + tags.branch);
+                let nameLabel = name + (_7DaysAgo < new Date(tags.timestamp) ? update : '');
+                    
                 let category = PoiCont.get_catname(tags);
                 let between = Math.round(PoiCont.calc_between(latlngs[tags.id], map.getCenter()));
-                let target = pois.targets[idx].join(',');
-                datas.push({ "osmid": tags.id, "name": name, "category": category, "between": between, "target": target });
+                const targets = pois.targets[idx];
+                let bookmarkLabel = "";
+                if (Conf.local.EnableBookmark) {
+                  if (bookmark.isBookmarked(tags.id)) {
+                      targets.push("bookmarked");
+                  }
+                  bookmarkLabel = bookmark.createTag(tags.id);
+                }
+                let target = targets.join(',');
+                datas.push({ "osmid": tags.id, "bookmark": bookmarkLabel, "name": nameLabel, 
+                    "category": category, "between": between, "target": target });
             });
             datas.sort((a, b) => {
                 if (a.between > b.between) {
@@ -93,6 +103,96 @@ var PoiCont = (function () {
         return { geojson: pois, latlng: lls, targets: tars };
     };
 })();
+const STORAGE_KEY_BOOKMARK = 'takeaway_bookmarks';
+class Bookmark {
+    load () {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY_BOOKMARK);
+            this.bookmarks = (saved == null) ? {} : JSON.parse(saved);
+        } catch (e) {
+            this.bookmarks = {};
+            alert("Sorry, your browser does not support local storage.");
+        }
+    }
+    createTag (osmid) {
+        const bookmarked = this.isBookmarked(osmid);
+        const suffix = (bookmarked)?"bm_true":"bm_false";
+        const bookmarkLabel = "<span title='Bookmark'" + 
+            "id='bm_" + osmid + 
+            "' bookmark='" + bookmarked +
+            "' class='" + bookmark.getClassName(bookmarked) + 
+            "' osmid='" + osmid +
+            "' onclick='event.stopPropagation();bookmark.toggleByTable(this)'><i class='fas fa-star'></i><a href='#'>" + 
+            suffix + "</a></span>";
+        return bookmarkLabel;
+    }
+    getClassName (bookmarked) {
+        return "bookmark bookmark_" + ((bookmarked) ? "true" : "false");
+    }
+    isBookmarked (osmId) {
+        return this.bookmarks[osmId] != undefined;
+    }
+    /* Toggle bookmark (by table icon) */
+    toggleByTable (sender) {
+        const osmid = sender.getAttribute("osmid");
+        const bookmarked = sender.getAttribute("bookmark") != 'true';
+        this.setBookmark(osmid, bookmarked);
+    }
+    /* Toggle bookmark (by modal button) */
+    setBookmarkByModal (osmid, bookmarked) {
+        this.setBookmark(osmid, bookmarked);
+    }
+    setBookmark (osmid, bookmarked) {
+        if (bookmarked) {
+            const poi = PoiCont.get_osmid(osmid);
+            const tags = poi.geojson.properties;
+            let obj = {
+                "lat" : poi.latlng.lat,
+                "lng" : poi.latlng.lng,
+                "timestamp": new Date().getTime()
+            };
+            if (tags.name) {
+                obj.name = tags.name;
+            }
+            if (tags.branch) {
+                obj.branch = tags.branch;
+            }
+            this.add(osmid, obj);
+        } else {
+            this.remove(osmid);
+        }
+        this.save();
+        // テーブル左の★アイコンのスタイル及び属性を変更
+        const icon = document.getElementById("bm_" + osmid);
+        if (icon) {
+            icon.setAttribute("bookmark", bookmarked);
+            icon.className = this.getClassName(bookmarked);
+            console.log(icon.getElementsByTagName("A"))
+            const a = icon.getElementsByTagName("A")[0];
+            a.innerHTML = (bookmarked)?"bm_true":"bm_false";
+        }
+    }
+    add (osmid, obj) {
+        console.log("add");
+        console.log(obj);
+        this.bookmarks[osmid] = obj;
+    }
+    remove (osmid) {
+        if (!this.isBookmarked(osmid)) {
+            delete this.bookmarks[osmid];
+        }
+    }
+    save () {
+        try {
+            localStorage.setItem(STORAGE_KEY_BOOKMARK, JSON.stringify(this.bookmarks));
+            console.log(this.bookmarks);
+        } catch (e) {
+            alert("Sorry, your browser does not support local storage.");
+        }
+    }
+}
+const bookmark = new Bookmark();
+bookmark.load();
 
 // make Marker
 var Marker = (function () {
@@ -167,10 +267,13 @@ var DataList = (function () {
             // デリバリー選択肢にキーワード追加
             DisplayStatus.clear_select("delivery_list");
             DisplayStatus.add_select("delivery_list", Conf.category.delivery.yes, "delivery");
+            if (Conf.local.EnableBookmark)
+                DisplayStatus.add_select("delivery_list", Conf.category.bookmarked, "bookmarked");
             let delivery_list = document.getElementById("delivery_list");
             delivery_list.addEventListener("change", (e) => {
+                console.log(e.target.value);
                 let keyword = e.target.value == "-" ? "" : e.target.value;
-                table.column(3).search(keyword).draw();
+                table.column(4).search(keyword).draw();
             });
 
             // カテゴリ選択時にキーワード検索
@@ -186,6 +289,8 @@ var DataList = (function () {
             DisplayStatus.clear_select("category_list");
             DisplayStatus.clear_select("delivery_list");
             DisplayStatus.add_select("delivery_list", Conf.category.delivery.yes, "delivery");
+            if (Conf.local.EnableBookmark)
+                DisplayStatus.add_select("delivery_list", Conf.category.bookmarked, "bookmarked");
             shops = result.map(data => { return data.category });
             shops = shops.filter((x, i, self) => { return self.indexOf(x) === i });
             shops.map(shop => DisplayStatus.add_select("category_list", shop, shop));
@@ -194,10 +299,14 @@ var DataList = (function () {
             DataList.lock(true);
             if (table !== undefined) table.destroy();
             let result = PoiCont.list(targets);
+            let columnDefs = [{ "targets": 3, "render": $.fn.dataTable.render.number(',', '.', 0, '', 'm') }, { targets: 4, visible: false }];
+            if (!Conf.local.EnableBookmark) {
+                columnDefs.push({ targets: 0, visible: false });
+            }
             table = $('#tableid').DataTable({
                 "autoWidth": true,
                 "columns": Object.keys(Conf.datatables_columns).map(function (key) { return Conf.datatables_columns[key] }),
-                "columnDefs": [{ "targets": 2, "render": $.fn.dataTable.render.number(',', '.', 0, '', 'm') }, { targets: 3, visible: false }],
+                "columnDefs": columnDefs,
                 "data": result,
                 "processing": true,
                 "filter": true,
