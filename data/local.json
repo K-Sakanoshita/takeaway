@@ -48,6 +48,10 @@
                 "node[\"takeaway:covid19\"]",
                 "way[\"takeaway:covid19\"]"
             ],
+            "tags": [
+                "takeaway",
+                "takeaway:covid19"
+            ],
             "list": true,
             "zoom": 15
         },
@@ -58,8 +62,13 @@
                 "node[\"delivery:covid19\"]",
                 "way[\"delivery:covid19\"]"
             ],
+            "tags": [
+                "delivery",
+                "delivery:covid19"
+            ],
             "list": true,
-            "zoom": 15        },
+            "zoom": 15
+        },
         "takeaway_shop": {
             "ovpass": [
                 "node[\"shop\"=\"bakery\"]",
@@ -69,12 +78,18 @@
                 "node[\"shop\"=\"alcohol\"]",
                 "way[\"shop\"=\"alcohol\"]"
             ],
+            "tags": [
+                "shop"
+            ],
             "list": true,
             "zoom": 15
         },
         "vending_machine": {
             "ovpass": [
                 "node[\"amenity\"=\"vending_machine\"][\"vending\"=\"drinks\"]"
+            ],
+            "tags": [
+                "amenity=vending_machine"
             ],
             "list": false,
             "zoom": 18
@@ -83,6 +98,9 @@
             "ovpass": [
                 "node[\"amenity\"=\"library\"]",
                 "way[\"amenity\"=\"library\"]"
+            ],
+            "tags": [
+                "amenity=library"
             ],
             "list": true,
             "zoom": 15
