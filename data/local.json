@@ -2,8 +2,8 @@
     "local": {
         "SplashImage": "image/splash.png",
         "DefaultCenter": [
-            34.7659,
-            134.8341
+            34.7075,
+            135.5018
         ],
         "DefaultZoom": 15,
         "IconViewZoom": 15,
@@ -11,7 +11,7 @@
         "attribution": "<a href=\"https://www.maptiler.com/copyright/\" target=\"_blank\">© MapTiler</a> <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">© OpenStreetMap contributors</a>",
         "style": "https://api.maptiler.com/maps/3c10e59f-b7de-4ca9-b95b-75e30257f090/style.json?key=Eq2IyrHsOEGFU1W1fvd7",
         "GoogleAnalytics": "UA-98610409-3",
-        "EnableBookmark": false
+        "EnableBookmark": true
     },
     "menu": [
         {

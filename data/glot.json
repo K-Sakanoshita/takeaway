@@ -1,10 +1,10 @@
 {
     "title": {
-        "ja": "みんなでテイクアウトMAP <Code for Harima>",
-        "en": "Takeout MAP with everyone <Code for Harima Ver>"
+        "ja": "みんなでテイクアウトMAP <開発版>",
+        "en": "Takeout MAP with everyone <Develop Ver>"
     },
     "owner": {
-        "ja": "みんなでテイクアウトMAP <Code for Harima>について",
+        "ja": "みんなでテイクアウトMAP <開発版>について",
         "en": "about Takeout MAP with everyone"
     },
     "openstreetmap": {
