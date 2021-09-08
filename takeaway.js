@@ -9,7 +9,7 @@ var LL = {}, Conf = {}          // latlng,Config
 const MoreZoomMsg = "ズームすると店舗が表示されます。";
 const OvGetError = "サーバーからのデータ取得に失敗しました。やり直してください。";
 // const OvServer = 'https://overpass.kumi.systems/api/interpreter' // or 'https://overpass-api.de/api/interpreter' or 'https://overpass.nchc.org.tw/api/interpreter'
-const OvServer = 'https://overpass.nchc.org.tw/api/interpreter'
+const OvServer = 'https://overpass-api.de/api/interpreter';
 const LANG = (window.navigator.userLanguage || window.navigator.language || window.navigator.browserLanguage).substr(0, 2) == "ja" ? "ja" : "en";
 const FILES = ['modals.html', 'data/category-' + LANG + '.json', 'data/datatables-' + LANG + '.json', 'data/local.json'];
 
